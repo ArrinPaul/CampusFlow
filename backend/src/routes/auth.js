@@ -92,6 +92,10 @@ router.post("/login", async (req, res) => {
 
 router.get("/me", authMiddleware, async (req, res) => {
   try {
+    if (req.student.id === "00000000-0000-0000-0000-000000000000") {
+      return res.json({ student: req.student });
+    }
+
     const { data: student, error } = await getClient()
       .from("students")
       .select("id, name, email, branch, year, telegram_username, subjects, created_at")

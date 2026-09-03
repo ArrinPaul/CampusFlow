@@ -153,4 +153,105 @@ router.get("/my-groups", authMiddleware, async (req, res) => {
   }
 });
 
+// GET /api/groups/events - Get all events/announcements for a student's groups
+router.get("/events", authMiddleware, async (req, res) => {
+  try {
+    const supabase = getClient();
+    
+    // First find which groups the student is in
+    const { data: memberships, error: memError } = await supabase
+      .from("group_members")
+      .select("group_id")
+      .eq("student_id", req.student.id);
+
+    if (memError) throw memError;
+    
+    if (!memberships || memberships.length === 0) {
+      return res.json({ events: [] });
+    }
+
+    const groupIds = memberships.map(m => m.group_id);
+
+    // Fetch events for those groups
+    const { data: events, error: eventError } = await supabase
+      .from("events")
+      .select("*, telegram_groups(name)")
+      .in("group_id", groupIds)
+      .order("created_at", { ascending: false });
+
+    if (eventError) throw eventError;
+
+    res.json({ events });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// POST /api/groups/webhook/message - n8n Webhook for processing telegram messages
+router.post("/webhook/message", async (req, res) => {
+  try {
+    const { chat_id, text, sender_name } = req.body;
+    
+    if (!chat_id || !text) {
+      return res.status(400).json({ message: "chat_id and text are required" });
+    }
+
+    const supabase = getClient();
+
+    // 1. Find group by chat_id
+    const { data: group, error: groupError } = await supabase
+      .from("telegram_groups")
+      .select("id")
+      .eq("telegram_chat_id", chat_id)
+      .single();
+
+    if (groupError || !group) {
+      return res.status(404).json({ message: "Group not found for chat_id" });
+    }
+
+    // 2. Extract Event via AI
+    const { extractGroupEvent } = require("../services/groq");
+    const extractedData = await extractGroupEvent(text);
+    
+    if (!extractedData) {
+      // Not an announcement, just normal chat
+      return res.json({ message: "Ignored: No academic event extracted." });
+    }
+
+    // 3. Save to database
+    const { data: event, error: insertError } = await supabase
+      .from("events")
+      .insert({
+        group_id: group.id,
+        title: extractedData.title,
+        event_date: extractedData.event_date,
+        priority: extractedData.priority || "Medium",
+        category: extractedData.category || "Other",
+        raw_message: text,
+        source: "telegram"
+      })
+      .select()
+      .single();
+
+    if (insertError) throw insertError;
+
+    // 4. Trigger Calendar Fan-out asynchronously
+    // Using local fetch to hit our own calendar fan-out endpoint
+    const PORT = process.env.PORT || 4000;
+    fetch(`http://localhost:${PORT}/api/calendar/fan-out`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ event_id: event.id })
+    }).catch(err => console.error("Fan-out trigger failed:", err));
+
+    res.status(201).json({
+      message: "Event extracted and saved successfully",
+      event
+    });
+  } catch (error) {
+    console.error("Webhook processing error:", error.message);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
