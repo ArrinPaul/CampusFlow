@@ -88,3 +88,24 @@ CREATE TABLE public.whiteboards (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 CREATE INDEX idx_whiteboards_student_id ON public.whiteboards(student_id);
+
+-- Telegram Groups
+CREATE TABLE public.telegram_groups (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  telegram_chat_id BIGINT NOT NULL UNIQUE,
+  name TEXT NOT NULL,
+  invite_link TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX idx_telegram_groups_chat_id ON public.telegram_groups(telegram_chat_id);
+
+-- Group Members (links students to Telegram groups)
+CREATE TABLE public.group_members (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  group_id UUID REFERENCES public.telegram_groups(id) ON DELETE CASCADE,
+  student_id UUID REFERENCES public.students(id) ON DELETE CASCADE,
+  joined_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(group_id, student_id)
+);
+CREATE INDEX idx_group_members_group_id ON public.group_members(group_id);
+CREATE INDEX idx_group_members_student_id ON public.group_members(student_id);
