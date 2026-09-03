@@ -5,9 +5,8 @@
     "node": "24.x"
   },
   "scripts": {
-    "postinstall": "npm --prefix backend install",
     "build": "cd frontend && npm install && npm run build",
-    "start": "npm --prefix backend start"
+    "start": "cd frontend && npm start"
   },
   "dependencies": {
     "next": "16.2.9"

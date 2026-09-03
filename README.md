@@ -9,7 +9,7 @@ CampusFlow is a production-grade, full-stack campus management and cognitive stu
 
 ## System Architecture
 
-The following diagram illustrates the interactions between the Next.js frontend, Express backend, Supabase database, Groq AI services, and automated workflow webhooks:
+CampusFlow is a single Next.js application: the dashboard UI and the API both live in `frontend/` (App Router pages plus `app/api/**/route.ts` handlers), so there's one process, one deploy, and no cross-origin calls between "frontend" and "backend."
 
 ```mermaid
 graph TD
@@ -21,8 +21,7 @@ graph TD
 
     %% Nodes
     User([Student Client])
-    FE[Next.js Frontend <br/>Port 3000]:::primary
-    BE[Express Backend <br/>Port 4000]:::primary
+    App[Next.js App <br/>Pages + /api/* routes]:::primary
     DB[(Supabase DB / Local Fallback)]:::db
     GroqAI[Groq Cloud AI <br/>gemma2-9b-it / Fallback]:::secondary
     N8n[n8n Automations]:::secondary
@@ -30,12 +29,11 @@ graph TD
     PDF[PDF.js Local Worker]:::secondary
 
     %% Edits
-    User <--> |Interacts| FE
-    FE <--> |API Requests / Auth| BE
-    FE <--> |Local PDF Parsing| PDF
-    BE <--> |CRUD Queries| DB
-    BE <--> |AI Prompts & Text Summaries| GroqAI
-    BE -.-> |Deadlines & Notice Webhooks| N8n
+    User <--> |Interacts| App
+    App <--> |Local PDF Parsing| PDF
+    App <--> |CRUD Queries| DB
+    App <--> |AI Prompts & Text Summaries| GroqAI
+    App -.-> |Deadlines & Notice Webhooks| N8n
     N8n -.-> |Send Notifications| TG
 ```
 
@@ -65,7 +63,7 @@ flowchart LR
 * **Layers System**: Sidebar layer panel supporting locks, visibility toggles, layer creation, and layer list reordering. Rendering loops sort shapes by their assigned layer ID order and skip shapes on hidden layers.
 * **Inline Text Editing**: Double-clicking a shape opens an absolute-positioned textarea directly over the shape, scaled by the viewport zoom, replacing browser prompt dialogs.
 * **Minimap Projections**: Bottom-right floating canvas projecting the virtual coordinate space (-2000 to +2000) onto a small grid. It renders the viewport boundary using coordinate mapping and allows click-to-pan repositioning.
-* **Backend Auto-Save & Fallback**: Automatically updates the whiteboard database state every 3 seconds using a debounced hook. If the Supabase database connection is offline or if the whiteboard table has not been initialized, the system automatically falls back to storing whiteboard JSON payloads locally on the server (`backend/whiteboards_db.json`).
+* **Auto-Save & Fallback**: Automatically updates the whiteboard database state every 3 seconds using a debounced hook. If the Supabase database connection is offline or if the whiteboard table has not been initialized, the system automatically falls back to storing whiteboard JSON payloads locally on the server (`frontend/whiteboards_db.local.json`).
 
 ---
 
@@ -87,7 +85,7 @@ flowchart TD
 * **Unified Sources Manager**: Course notes are saved in a unified source store within `localStorage`. Checking/unchecking documents instantly updates the context used to generate quizzes and flashcards.
 * **Interactive Study Carousel**: Flashcards flip 3D on click, and support keyboard listeners (Space to flip, Left/Right arrows to navigate, and number hotkeys to rate mastery).
 * **Multi-Format Quiz Generator**: Generates multiple choice, true/false, or graded short-answer questions. Short answers are evaluated by the AI and assigned a score matching model criteria. All quiz outputs feature direct document citations.
-* **API Offline Fallback**: If the Groq AI key is unconfigured or returns an error, the backend routes intercept the exception and feed high-fidelity structured summary data, roadmaps, and quiz questions to the client, keeping the system functional.
+* **API Offline Fallback**: If the Groq AI key is unconfigured or returns an error, the API routes intercept the exception and feed high-fidelity structured summary data, roadmaps, and quiz questions to the client, keeping the system functional.
 
 ---
 
@@ -102,41 +100,34 @@ flowchart TD
 ## Directory Structure
 
 ```
-D:/Project/
-├── backend/
-│   ├── src/
-│   │   ├── index.js               # Express app entry point & route registration
-│   │   ├── middleware/
-│   │   │   └── auth.js            # JWT Validation Middleware
-│   │   ├── routes/
-│   │   │   ├── ai.js              # AI Completion Router (Chat, Quiz, Flashcards, Tools)
-│   │   │   ├── auth.js            # User Authentication Router
-│   │   │   ├── tasks.js           # Task Planner Router
-│   │   │   └── whiteboards.js     # Whiteboard CRUD Router (with Local JSON Fallback)
-│   │   └── services/
-│   │       ├── google.js          # Google API Calendar Service
-│   │       ├── groq.js            # Groq AI Service (with Offline Fallback generators)
-│   │       └── supabase.js        # Supabase PostgreSQL Client
-│   ├── .env                       # Backend Environment Configuration
-│   └── package.json
+D:/Campus Flow/
 ├── frontend/
 │   ├── src/
 │   │   ├── app/
+│   │   │   ├── api/                       # API routes (formerly the Express backend)
+│   │   │   │   ├── auth/                  # register, login, me, google/*
+│   │   │   │   ├── tasks/, notices/, attendance/, automations/
+│   │   │   │   ├── ai/                    # Chat, quiz/flashcard generation, smart tools
+│   │   │   │   ├── quizzes/, flashcards/  # Persisted quiz/flashcard CRUD
+│   │   │   │   ├── whiteboards/           # Whiteboard CRUD (with local JSON fallback)
+│   │   │   │   ├── groups/, calendar/, reminders/  # Telegram/n8n automation endpoints
+│   │   │   │   └── health/
 │   │   │   └── (dashboard)/
 │   │   │       └── dashboard/
-│   │   │           ├── tools/     # Smart Tools workspace page
-│   │   │           └── whiteboard/# Visual Whiteboard page
+│   │   │           ├── tools/             # Smart Tools workspace page
+│   │   │           └── whiteboard/        # Visual Whiteboard page
 │   │   ├── components/
 │   │   │   └── shared/
-│   │   │       └── Sidebar.tsx    # Dashboard Navigation Sidebar
+│   │   │       └── Sidebar.tsx            # Dashboard Navigation Sidebar
 │   │   ├── features/
-│   │   │   └── whiteboard/        # Whiteboard components, hooks, and helpers
+│   │   │   └── whiteboard/                # Whiteboard components, hooks, and helpers
 │   │   └── lib/
-│   │       └── api.ts             # API Client Configuration
-│   ├── .env.local                 # Frontend Environment Configuration
+│   │       ├── api.ts                     # Client-side fetch wrapper (calls same-origin /api/*)
+│   │       └── server/                    # Server-only: auth (JWT), Supabase, Groq, Google, n8n
+│   ├── .env.local                         # Environment configuration (server + client)
 │   └── package.json
 └── sql/
-    └── schema.sql                 # Database Table and Index Definitions
+    └── schema.sql                         # Database Table and Index Definitions
 ```
 
 ---
@@ -144,43 +135,36 @@ D:/Project/
 ## Development Setup
 
 ### 1. Database Schema Setup
-Execute the instructions in [schema.sql](file:///D:/Project/sql/schema.sql) in your Supabase SQL Editor. This initializes tables and indices for students, tasks, notices, attendance, and whiteboards.
+Execute the instructions in [schema.sql](file:///D:/Campus%20Flow/sql/schema.sql) in your Supabase SQL Editor. This initializes tables and indices for students, tasks, notices, attendance, and whiteboards.
 
 ### 2. Environment Configuration
-Create a `.env` file in the `backend/` directory:
+Create a `.env.local` file in the `frontend/` directory:
 ```env
 SUPABASE_URL=https://your-supabase-id.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-jwt-key
 JWT_SECRET=your-secure-jwt-key
-PORT=4000
+DEV_MODE=false
+NEXT_PUBLIC_DEV_MODE=false
 GROQ_API_KEY=your-groq-api-key
 N8N_DEADLINE_WEBHOOK=https://your-n8n-url/webhook/deadline
 N8N_NOTICE_WEBHOOK=https://your-n8n-url/webhook/notice
 TELEGRAM_BOT_TOKEN=your-telegram-token
 FRONTEND_URL=http://localhost:3000
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+GOOGLE_REDIRECT_URI=http://localhost:3000/api/auth/google/callback
 ```
+Note: these were previously split across a separate `backend/.env` and `frontend/.env.local` — they now all live in `frontend/.env.local` since there's one app. None of these are prefixed `NEXT_PUBLIC_` (except the dev-mode flag needed client-side to show the dev-login button), so they stay server-only and are never sent to the browser.
 
-Create a `.env.local` file in the `frontend/` directory:
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-supabase-id.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-```
+### 3. Install & Start
 
-### 3. Install & Start Servers
-
-To run the Backend Server:
-```bash
-cd backend
-npm install
-node src/index.js
-```
-
-To run the Frontend Server:
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
+
+The app (pages + `/api/*` routes) runs on `http://localhost:3000`.
 
 ---
 

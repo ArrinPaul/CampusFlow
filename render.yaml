@@ -1,22 +1,24 @@
 services:
   - type: web
-    name: campusflow-backend
+    name: campusflow
     runtime: node
-    rootDir: backend
-    buildCommand: npm install
+    rootDir: frontend
+    buildCommand: npm install && npm run build
     startCommand: npm start
     healthCheckPath: /api/health
     envVars:
       - key: NODE_VERSION
         value: 20
-      - key: PORT
-        value: 10000
       - key: SUPABASE_URL
         sync: false
       - key: SUPABASE_SERVICE_ROLE_KEY
         sync: false
       - key: JWT_SECRET
         sync: false
+      - key: DEV_MODE
+        value: "false"
+      - key: NEXT_PUBLIC_DEV_MODE
+        value: "false"
       - key: GROQ_API_KEY
         sync: false
       - key: N8N_DEADLINE_WEBHOOK
