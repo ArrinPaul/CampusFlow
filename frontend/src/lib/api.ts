@@ -1,4 +1,5 @@
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000";
+// Same-origin: the API lives at /api/* within this Next.js app.
+const API_URL = "";
 
 interface RequestOptions extends RequestInit {
   token?: string;
