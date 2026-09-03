@@ -71,7 +71,7 @@ export const LayerPanel = memo(function LayerPanel({
                   className="p-1 hover:bg-muted rounded-[4px] cursor-pointer"
                   title={layer.visible ? 'Hide' : 'Show'}
                 >
-                  {layer.visible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5 text-red-500" />}
+                  {layer.visible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5 text-destructive" />}
                 </button>
                 
                 <button
@@ -79,7 +79,7 @@ export const LayerPanel = memo(function LayerPanel({
                   className="p-1 hover:bg-muted rounded-[4px] cursor-pointer"
                   title={layer.locked ? 'Unlock' : 'Lock'}
                 >
-                  {layer.locked ? <Lock className="w-3.5 h-3.5 text-red-500" /> : <Unlock className="w-3.5 h-3.5" />}
+                  {layer.locked ? <Lock className="w-3.5 h-3.5 text-destructive" /> : <Unlock className="w-3.5 h-3.5" />}
                 </button>
 
                 <div className="flex flex-col">
@@ -102,7 +102,7 @@ export const LayerPanel = memo(function LayerPanel({
                 <button
                   onClick={() => onRemoveLayer(layer.id)}
                   disabled={layers.length <= 1}
-                  className="p-1 hover:bg-red-50 hover:text-red-500 rounded-[4px] disabled:opacity-30 cursor-pointer"
+                  className="p-1 hover:bg-destructive/10 hover:text-destructive rounded-[4px] disabled:opacity-30 cursor-pointer"
                   title="Delete Layer"
                 >
                   <Trash2 className="w-3.5 h-3.5" />

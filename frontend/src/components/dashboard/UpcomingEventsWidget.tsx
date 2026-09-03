@@ -44,7 +44,7 @@ export function UpcomingEventsWidget() {
 
   if (loading) {
     return (
-      <div className="bg-white border border-border rounded-xl p-5 h-full">
+      <div className="bg-white border border-border rounded-[10px] p-5 h-full">
         <div className="h-4 bg-muted rounded animate-pulse w-1/3 mb-4" />
         {[1, 2, 3].map((i) => (
           <div key={i} className="h-14 bg-muted rounded animate-pulse mb-2" />
@@ -54,9 +54,9 @@ export function UpcomingEventsWidget() {
   }
 
   return (
-    <div className="bg-white border border-border rounded-xl p-5 card-hover h-full">
+    <div className="bg-white border border-border rounded-[10px] p-5 card-hover h-full">
       <div className="flex items-center gap-2 mb-4">
-        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+        <div className="w-8 h-8 rounded-[10px] bg-primary/10 flex items-center justify-center">
           <CalendarDays className="w-4 h-4 text-primary" />
         </div>
         <h3 className="font-semibold text-foreground text-sm">Upcoming Events</h3>

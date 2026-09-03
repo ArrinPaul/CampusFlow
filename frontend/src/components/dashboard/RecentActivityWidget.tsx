@@ -49,7 +49,7 @@ export function RecentActivityWidget() {
 
   if (loading) {
     return (
-      <div className="bg-white border border-border rounded-xl p-5 h-full">
+      <div className="bg-white border border-border rounded-[10px] p-5 h-full">
         <div className="h-4 bg-muted rounded animate-pulse w-1/3 mb-4" />
         {[1, 2, 3, 4].map((i) => (
           <div key={i} className="h-12 bg-muted rounded animate-pulse mb-2" />
@@ -60,21 +60,21 @@ export function RecentActivityWidget() {
 
   if (logs.length === 0) {
     return (
-      <div className="bg-white border border-border rounded-xl p-5 card-hover h-full">
+      <div className="bg-white border border-border rounded-[10px] p-5 card-hover h-full">
         <h3 className="font-semibold text-foreground text-sm mb-4">Recent Activity</h3>
         <div className="flex flex-col items-center justify-center py-8">
           <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center mb-3">
             <CheckCircle className="w-6 h-6 text-muted-foreground" />
           </div>
           <p className="text-sm font-medium text-foreground mb-1">No activity yet</p>
-          <p className="text-xs text-muted-foreground">Activity will appear here as you use CampusFlow</p>
+          <p className="text-xs text-muted-foreground">Activity will appear here as you use UniKit</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white border border-border rounded-xl p-5 card-hover h-full">
+    <div className="bg-white border border-border rounded-[10px] p-5 card-hover h-full">
       <h3 className="font-semibold text-foreground text-sm mb-4">Recent Activity</h3>
       <div className="space-y-0">
         {logs.slice(0, 5).map((log) => {
@@ -85,7 +85,7 @@ export function RecentActivityWidget() {
 
           return (
             <div key={log.id} className="flex items-start gap-3 py-2.5">
-              <div className={`w-8 h-8 rounded-lg ${bg} flex items-center justify-center flex-shrink-0`}>
+              <div className={`w-8 h-8 rounded-[10px] ${bg} flex items-center justify-center flex-shrink-0`}>
                 <Icon className={`w-4 h-4 ${color}`} />
               </div>
               <div className="flex-1 min-w-0">
@@ -94,7 +94,7 @@ export function RecentActivityWidget() {
               </div>
               <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
                 log.status === "success" ? "bg-emerald-50 text-emerald-600" :
-                log.status === "failed" ? "bg-red-50 text-red-600" :
+                log.status === "failed" ? "bg-destructive/10 text-destructive" :
                 "bg-primary/10 text-primary"
               }`}>
                 {log.status}

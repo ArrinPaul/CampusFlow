@@ -200,12 +200,9 @@ export default function TasksPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Tasks</h1>
-          <p className="text-muted-foreground mt-1">Manage your deadlines and assignments</p>
-        </div>
+    <div className="max-w-7xl mx-auto h-[calc(100vh-6rem)] flex flex-col">
+      <div className="flex items-center justify-between flex-shrink-0 mb-6">
+        <h1 className="text-2xl font-bold text-foreground">Tasks</h1>
         <button 
           onClick={handleOpenCreateModal}
           className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-medium rounded-[10px] hover:opacity-90 transition-standard cursor-pointer"
@@ -216,7 +213,7 @@ export default function TasksPage() {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex gap-2 border-b border-border pb-1">
+      <div className="flex gap-2 border-b border-border pb-1 mb-4 flex-shrink-0">
         {(["all", "today", "upcoming", "completed"] as const).map((filter) => (
           <button
             key={filter}
@@ -232,35 +229,36 @@ export default function TasksPage() {
         ))}
       </div>
 
-      {loading ? (
-        <div className="flex flex-col items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 text-primary animate-spin mb-2" />
-          <p className="text-sm text-muted-foreground">Loading tasks...</p>
-        </div>
-      ) : filteredTasks.length === 0 ? (
-        <div className="bg-white border border-border rounded-[10px] p-12 text-center shadow-sm">
-          <ListTodo className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-foreground mb-2">No tasks found</h3>
-          <p className="text-sm text-muted-foreground mb-4">
-            {activeFilter === "all" 
-              ? "Create your first task to get started with deadline tracking." 
-              : `No tasks found for "${activeFilter}" filter.`}
-          </p>
-          {activeFilter === "all" && (
-            <button 
-              onClick={handleOpenCreateModal}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-medium rounded-[10px] hover:opacity-90 transition-standard cursor-pointer"
-            >
-              <Plus className="w-4 h-4" />
-              Create Task
-            </button>
-          )}
-        </div>
-      ) : (
-        <div className="grid gap-4">
-          {filteredTasks.map((task) => (
-            <div
-              key={task.id}
+      <div className="flex-1 overflow-y-auto min-h-0 pr-1 pb-6">
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-20 h-full">
+            <Loader2 className="w-8 h-8 text-primary animate-spin mb-2" />
+            <p className="text-sm text-muted-foreground">Loading tasks...</p>
+          </div>
+        ) : filteredTasks.length === 0 ? (
+          <div className="bg-white border border-border rounded-[10px] p-12 text-center shadow-sm max-w-md mx-auto mt-10">
+            <ListTodo className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-foreground mb-2">No tasks found</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              {activeFilter === "all" 
+                ? "Create your first task to get started with deadline tracking." 
+                : `No tasks found for "${activeFilter}" filter.`}
+            </p>
+            {activeFilter === "all" && (
+              <button 
+                onClick={handleOpenCreateModal}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-medium rounded-[10px] hover:opacity-90 transition-standard cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                Create Task
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+            {filteredTasks.map((task) => (
+              <div
+                key={task.id}
               className={`bg-white border rounded-[10px] p-5 shadow-sm transition-all hover:shadow-md flex items-start gap-4 ${
                 task.status === "completed" ? "opacity-75 border-green-200 bg-green-50/10" : "border-border"
               }`}
@@ -283,21 +281,21 @@ export default function TasksPage() {
                     <h3 className={`text-base font-semibold text-foreground ${task.status === "completed" ? "line-through text-muted-foreground" : ""}`}>
                       {task.title}
                     </h3>
-                    <span className="inline-block px-2 py-0.5 text-xs font-semibold bg-muted text-muted-foreground rounded-full mt-1">
+                    <span className="inline-block px-2 py-0.5 text-xs font-semibold bg-muted text-muted-foreground rounded-[10px] mt-1">
                       {task.subject}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <button
                       onClick={() => handleOpenEditModal(task)}
-                      className="p-1.5 hover:bg-accent rounded-md text-muted-foreground hover:text-foreground transition-standard cursor-pointer"
+                      className="p-1.5 hover:bg-accent rounded-[10px] text-muted-foreground hover:text-foreground transition-standard cursor-pointer"
                       title="Edit task"
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDelete(task.id)}
-                      className="p-1.5 hover:bg-destructive/10 rounded-md text-muted-foreground hover:text-destructive transition-standard cursor-pointer"
+                      className="p-1.5 hover:bg-destructive/10 rounded-[10px] text-muted-foreground hover:text-destructive transition-standard cursor-pointer"
                       title="Delete task"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -336,7 +334,7 @@ export default function TasksPage() {
                     </div>
                   )}
                   {task.add_to_calendar && (
-                    <span className="px-2 py-0.5 bg-blue-500/10 text-blue-600 rounded-full font-medium">
+                    <span className="px-2 py-0.5 bg-blue-500/10 text-blue-600 rounded-[10px] font-medium">
                       Google Calendar Linked
                     </span>
                   )}
@@ -346,6 +344,7 @@ export default function TasksPage() {
           ))}
         </div>
       )}
+      </div>
 
       {/* Task Form Modal */}
       {isModalOpen && (

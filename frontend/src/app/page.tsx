@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
+import { ReactLenis } from 'lenis/react';
 import {
   CalendarClock,
   Sparkles,
@@ -50,8 +51,8 @@ function Header() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-2">
-            <GraduationCap className="w-8 h-8 text-primary" />
-            <span className="text-xl font-bold text-foreground">CampusFlow</span>
+            <img src="/logo-ukit.png" alt="UniKit Logo" className="w-8 h-8 object-contain" />
+            <span className="text-xl font-bold text-foreground">UniKit</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-8">
@@ -81,7 +82,7 @@ function Header() {
             {user ? (
               <Link
                 href="/dashboard"
-                className="px-4 py-2 text-sm font-medium text-primary-foreground bg-primary rounded-full hover:opacity-90 transition-standard"
+                className="px-4 py-2 text-sm font-medium text-primary-foreground bg-primary rounded-[10px] hover:opacity-90 transition-standard"
               >
                 Dashboard
               </Link>
@@ -89,7 +90,7 @@ function Header() {
               <>
                 <Link
                   href="/login"
-                  className="px-4 py-2 text-sm font-medium text-foreground border border-border rounded-full hover:bg-accent transition-standard"
+                  className="px-4 py-2 text-sm font-medium text-foreground border border-border rounded-[10px] hover:bg-accent transition-standard"
                 >
                   Sign In
                 </Link>
@@ -130,15 +131,15 @@ function Header() {
               Why Us
             </Link>
             {user ? (
-              <Link href="/dashboard" className="block px-4 py-2 text-sm font-medium text-primary-foreground bg-primary rounded-full text-center" onClick={() => setMobileOpen(false)}>
+              <Link href="/dashboard" className="block px-4 py-2 text-sm font-medium text-primary-foreground bg-primary rounded-[10px] text-center" onClick={() => setMobileOpen(false)}>
                 Dashboard
               </Link>
             ) : (
               <>
-                <Link href="/login" className="block px-4 py-2 text-sm font-medium text-foreground border border-border rounded-full text-center" onClick={() => setMobileOpen(false)}>
+                <Link href="/login" className="block px-4 py-2 text-sm font-medium text-foreground border border-border rounded-[10px] text-center" onClick={() => setMobileOpen(false)}>
                   Sign In
                 </Link>
-                <Link href="/signup" className="block px-4 py-2 text-sm font-medium text-primary-foreground bg-primary rounded-full text-center" onClick={() => setMobileOpen(false)}>
+                <Link href="/signup" className="block px-4 py-2 text-sm font-medium text-primary-foreground bg-primary rounded-[10px] text-center" onClick={() => setMobileOpen(false)}>
                   Get Started
                 </Link>
               </>
@@ -164,7 +165,7 @@ function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-semibold text-primary bg-primary/10 rounded-full mb-6">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-semibold text-primary bg-primary/10 rounded-[10px] mb-6">
             <Sparkles className="w-3.5 h-3.5" />
             AI-Powered Student Hub
           </span>
@@ -191,7 +192,7 @@ function Hero() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed"
         >
-          CampusFlow unifies deadlines, attendance, notices, and AI tools so your academic life
+          UniKit unifies deadlines, attendance, notices, and AI tools so your academic life
           moves from chaos to clarity — automatically.
         </motion.p>
 
@@ -210,7 +211,7 @@ function Hero() {
           </Link>
           <a
             href="#modules"
-            className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-medium text-foreground border border-border rounded-full hover:bg-accent transition-standard"
+            className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-medium text-foreground border border-border rounded-[10px] hover:bg-accent transition-standard"
           >
             Learn More
           </a>
@@ -331,7 +332,7 @@ function Modules() {
             initial={{ opacity: 0, x: -20 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="bg-white rounded-xl shadow-md p-4 md:p-6 flex flex-col"
+            className="bg-white rounded-[10px] shadow-md p-4 md:p-6 flex flex-col"
           >
             <h3 className="text-lg font-bold mb-4 text-foreground">Modules</h3>
             <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0 flex-grow scrollbar-hide">
@@ -340,13 +341,13 @@ function Modules() {
                   key={mod.id}
                   onClick={() => setActive(mod.id)}
                   onMouseEnter={() => setActive(mod.id)}
-                  className={`flex items-center gap-3 p-3 rounded-lg text-left transition-all duration-200 shrink-0 ${
+                  className={`flex items-center gap-3 p-3 rounded-[10px] text-left transition-all duration-200 shrink-0 ${
                     active === mod.id
                       ? "bg-primary/5 text-primary"
                       : "text-muted-foreground hover:bg-muted"
                   }`}
                 >
-                  <div className={`p-2 rounded-lg text-white ${mod.iconBg}`}>
+                  <div className={`p-2 rounded-[10px] text-white ${mod.iconBg}`}>
                     <mod.icon className="w-5 h-5" />
                   </div>
                   <span className="font-medium whitespace-nowrap">{mod.label}</span>
@@ -359,7 +360,7 @@ function Modules() {
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="lg:col-span-2 bg-white rounded-xl shadow-md overflow-hidden min-h-[400px]"
+            className="lg:col-span-2 bg-white rounded-[10px] shadow-md overflow-hidden min-h-[400px]"
           >
             <AnimatePresence mode="wait">
               <motion.div
@@ -372,7 +373,7 @@ function Modules() {
               >
                 <div className="p-6 md:p-8 flex flex-col justify-between">
                   <div>
-                    <div className={`p-3 rounded-lg text-white w-fit mb-4 ${activeModule.iconBg}`}>
+                    <div className={`p-3 rounded-[10px] text-white w-fit mb-4 ${activeModule.iconBg}`}>
                       <activeModule.icon className="w-6 h-6" />
                     </div>
                     <h3 className="text-xl font-bold mb-3 text-foreground">{activeModule.title}</h3>
@@ -389,9 +390,9 @@ function Modules() {
                   </div>
                 </div>
                 <div className="bg-muted/50 p-6 md:p-8 flex items-center justify-center">
-                  <div className="w-full max-w-sm bg-white rounded-xl shadow-sm border border-border p-5">
+                  <div className="w-full max-w-sm bg-white rounded-[10px] shadow-sm border border-border p-5">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className={`w-10 h-10 rounded-lg ${activeModule.iconBg} flex items-center justify-center`}>
+                      <div className={`w-10 h-10 rounded-[10px] ${activeModule.iconBg} flex items-center justify-center`}>
                         <activeModule.icon className="w-5 h-5 text-white" />
                       </div>
                       <div>
@@ -410,7 +411,7 @@ function Modules() {
                       ))}
                     </div>
                     <div className="mt-4 pt-4 border-t border-border">
-                      <div className={`h-9 rounded-lg ${activeModule.iconBg} flex items-center justify-center`}>
+                      <div className={`h-9 rounded-[10px] ${activeModule.iconBg} flex items-center justify-center`}>
                         <span className="text-white text-sm font-medium">Add New</span>
                       </div>
                     </div>
@@ -461,7 +462,7 @@ function AIFeatureCard({ feature, index }: { feature: typeof aiFeatures[0]; inde
 
   return (
     <div
-      className="group bg-white rounded-2xl shadow-lg hover:shadow-xl overflow-hidden cursor-pointer transition-all duration-500 ease-in-out h-[280px] flex flex-col"
+      className="group bg-white rounded-[10px] shadow-lg hover:shadow-xl overflow-hidden cursor-pointer transition-all duration-500 ease-in-out h-[280px] flex flex-col"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -471,7 +472,7 @@ function AIFeatureCard({ feature, index }: { feature: typeof aiFeatures[0]; inde
             {String(index + 1).padStart(2, "0")}
           </span>
         </div>
-        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+        <div className={`w-10 h-10 rounded-[10px] bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
           <feature.icon className="w-5 h-5 text-white" />
         </div>
         <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors duration-300">
@@ -514,7 +515,7 @@ function AIFeatures() {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-semibold text-primary bg-primary/10 rounded-full mb-4">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-semibold text-primary bg-primary/10 rounded-[10px] mb-4">
             <Sparkles className="w-3.5 h-3.5" />
             AI-POWERED FEATURES
           </span>
@@ -541,11 +542,11 @@ function AIFeatures() {
 }
 
 const comparisons = [
-  { feature: "Tool Management", traditional: "Multiple disconnected tools with separate logins", campusflow: "Single platform with integrated modules", icon: LayoutDashboard },
-  { feature: "Context Switching", traditional: "Constant switching between apps disrupts focus", campusflow: "Seamless workflow with everything in one place", icon: Zap },
-  { feature: "Reminders", traditional: "Manual calendar entries and phone alarms", campusflow: "Automatic Telegram alerts before deadlines", icon: Bell },
-  { feature: "Notice Processing", traditional: "Read entire long documents manually", campusflow: "AI-powered 3-bullet summaries in seconds", icon: FileText },
-  { feature: "Attendance Tracking", traditional: "Manual spreadsheet tracking and guesswork", campusflow: "Real-time per-subject risk alerts", icon: BarChart3 },
+  { feature: "Tool Management", traditional: "Multiple disconnected tools with separate logins", UniKit: "Single platform with integrated modules", icon: LayoutDashboard },
+  { feature: "Context Switching", traditional: "Constant switching between apps disrupts focus", UniKit: "Seamless workflow with everything in one place", icon: Zap },
+  { feature: "Reminders", traditional: "Manual calendar entries and phone alarms", UniKit: "Automatic Telegram alerts before deadlines", icon: Bell },
+  { feature: "Notice Processing", traditional: "Read entire long documents manually", UniKit: "AI-powered 3-bullet summaries in seconds", icon: FileText },
+  { feature: "Attendance Tracking", traditional: "Manual spreadsheet tracking and guesswork", UniKit: "Real-time per-subject risk alerts", icon: BarChart3 },
 ];
 
 function WhyUs() {
@@ -566,15 +567,15 @@ function WhyUs() {
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-semibold text-primary bg-primary/10 rounded-full mb-4">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-semibold text-primary bg-primary/10 rounded-[10px] mb-4">
             <Shield className="w-3.5 h-3.5" />
-            WHY CAMPUSFLOW?
+            WHY UniKit?
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4 tracking-tight">
             Less Context Switching
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            Stop juggling multiple apps. CampusFlow puts everything you need in one place.
+            Stop juggling multiple apps. UniKit puts everything you need in one place.
           </p>
         </motion.div>
 
@@ -584,10 +585,10 @@ function WhyUs() {
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <div className="bg-white rounded-2xl border border-border p-6 shadow-sm mb-4">
+            <div className="bg-white rounded-[10px] border border-border p-6 shadow-sm mb-4">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
-                  <X className="w-5 h-5 text-red-400" />
+                <div className="w-10 h-10 rounded-[10px] bg-destructive/10 flex items-center justify-center">
+                  <X className="w-5 h-5 text-destructive" />
                 </div>
                 <h3 className="text-lg font-bold text-foreground">The Old Way</h3>
               </div>
@@ -598,9 +599,9 @@ function WhyUs() {
                     initial={{ opacity: 0, x: -10 }}
                     animate={inView ? { opacity: 1, x: 0 } : {}}
                     transition={{ duration: 0.3, delay: 0.2 + i * 0.06 }}
-                    className="flex items-start gap-3 p-3 rounded-xl bg-muted/50"
+                    className="flex items-start gap-3 p-3 rounded-[10px] bg-muted/50"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-white border border-border flex items-center justify-center shrink-0 mt-0.5">
+                    <div className="w-8 h-8 rounded-[10px] bg-white border border-border flex items-center justify-center shrink-0 mt-0.5">
                       <row.icon className="w-4 h-4 text-muted-foreground" />
                     </div>
                     <div>
@@ -618,12 +619,12 @@ function WhyUs() {
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <div className="bg-white rounded-2xl border-2 border-primary/20 p-6 shadow-lg shadow-primary/5 mb-4">
+            <div className="bg-white rounded-[10px] border-2 border-primary/20 p-6 shadow-lg shadow-primary/5 mb-4">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-[10px] bg-primary/10 flex items-center justify-center">
                   <CheckCircle className="w-5 h-5 text-primary" />
                 </div>
-                <h3 className="text-lg font-bold text-foreground">The CampusFlow Way</h3>
+                <h3 className="text-lg font-bold text-foreground">The UniKit Way</h3>
               </div>
               <div className="space-y-4">
                 {comparisons.map((row, i) => (
@@ -632,14 +633,14 @@ function WhyUs() {
                     initial={{ opacity: 0, x: 10 }}
                     animate={inView ? { opacity: 1, x: 0 } : {}}
                     transition={{ duration: 0.3, delay: 0.3 + i * 0.06 }}
-                    className="flex items-start gap-3 p-3 rounded-xl bg-primary/5 border border-primary/10"
+                    className="flex items-start gap-3 p-3 rounded-[10px] bg-primary/5 border border-primary/10"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                    <div className="w-8 h-8 rounded-[10px] bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
                       <row.icon className="w-4 h-4 text-primary" />
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-foreground mb-0.5">{row.feature}</p>
-                      <p className="text-sm text-primary font-medium">{row.campusflow}</p>
+                      <p className="text-sm text-primary font-medium">{row.UniKit}</p>
                     </div>
                   </motion.div>
                 ))}
@@ -652,7 +653,7 @@ function WhyUs() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={inView ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.5, delay: 0.6 }}
-          className="mt-4 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 rounded-2xl p-8 text-center border border-primary/10"
+          className="mt-4 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 rounded-[10px] p-8 text-center border border-primary/10"
         >
           <div className="flex items-center justify-center gap-4 flex-wrap">
             <div className="text-center">
@@ -703,7 +704,7 @@ function ReplaceTools() {
         >
           <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4 tracking-tight">
             Replace Multiple Tools with{" "}
-            <span className="text-primary">CampusFlow</span>
+            <span className="text-primary">UniKit</span>
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto">
             One platform to rule them all. Stop paying for five different apps.
@@ -718,9 +719,9 @@ function ReplaceTools() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={inView ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: 0.4, delay: 0.1 + i * 0.08 }}
-                className="bg-white border border-border rounded-xl p-4 flex items-center gap-3 opacity-50 hover:opacity-70 transition-opacity"
+                className="bg-white border border-border rounded-[10px] p-4 flex items-center gap-3 opacity-50 hover:opacity-70 transition-opacity"
               >
-                <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-[10px] bg-muted flex items-center justify-center shrink-0">
                   <tool.icon className="w-5 h-5 text-muted-foreground" />
                 </div>
                 <span className="text-sm font-medium text-muted-foreground line-through decoration-primary/40">{tool.name}</span>
@@ -745,13 +746,13 @@ function ReplaceTools() {
             transition={{ duration: 0.5, delay: 0.6 }}
             className="flex-1 w-full"
           >
-            <div className="bg-white border-2 border-primary/20 rounded-2xl p-6 shadow-lg shadow-primary/10">
+            <div className="bg-white border-2 border-primary/20 rounded-[10px] p-6 shadow-lg shadow-primary/10">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-md shadow-primary/20">
-                  <GraduationCap className="w-6 h-6 text-white" />
+                <div className="w-12 h-12 rounded-[10px] bg-primary flex items-center justify-center shadow-md shadow-primary/20">
+                  <img src="/logo-ukit.png" alt="UniKit Logo" className="w-6 h-6 object-contain" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-foreground">CampusFlow</h3>
+                  <h3 className="text-xl font-bold text-foreground">UniKit</h3>
                   <p className="text-sm text-primary font-medium">All-in-one student hub</p>
                 </div>
               </div>
@@ -782,19 +783,19 @@ function CTA() {
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="bg-gradient-to-br from-primary via-primary to-secondary rounded-3xl p-10 md:p-16 text-center text-white relative overflow-hidden"
+          className="bg-gradient-to-br from-primary via-primary to-secondary rounded-[10px] p-10 md:p-16 text-center text-white relative overflow-hidden"
         >
           <div className="absolute inset-0">
             <div className="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
             <div className="absolute bottom-10 right-10 w-48 h-48 bg-white/5 rounded-full blur-3xl" />
           </div>
           <div className="relative z-10">
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-semibold bg-white/20 rounded-full mb-6">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-semibold bg-white/20 rounded-[10px] mb-6">
               <Zap className="w-3.5 h-3.5" />
               Free for Students
             </span>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight">
-              Start Building with CampusFlow Today
+              Start Building with UniKit Today
             </h2>
             <p className="text-white/80 max-w-xl mx-auto mb-8 leading-relaxed">
               Join students across India who never miss a deadline. Get started for free during our public beta and experience the full platform at no cost.
@@ -809,7 +810,7 @@ function CTA() {
               </Link>
               <a
                 href="#modules"
-                className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-medium text-white border border-white/30 rounded-full hover:bg-white/10 transition-standard"
+                className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-medium text-white border border-white/30 rounded-[10px] hover:bg-white/10 transition-standard"
               >
                 Learn More
               </a>
@@ -831,8 +832,8 @@ function Footer() {
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           <div>
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <GraduationCap className="w-6 h-6 text-primary" />
-              <span className="text-lg font-bold text-foreground">CampusFlow</span>
+              <img src="/logo-ukit.png" alt="UniKit Logo" className="w-6 h-6 object-contain" />
+              <span className="text-lg font-bold text-foreground">UniKit</span>
             </Link>
             <p className="text-sm text-muted-foreground">
               AI-powered student hub for deadline management
@@ -862,7 +863,7 @@ function Footer() {
         </div>
         <div className="border-t border-border pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground">
-            &copy; 2025 CampusFlow. All rights reserved.
+            &copy; 2025 UniKit. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
             <a href="#" className="text-xs text-muted-foreground hover:text-foreground transition-standard">Privacy</a>
@@ -876,17 +877,19 @@ function Footer() {
 
 export default function Home() {
   return (
-    <div className="min-h-screen">
-      <Header />
-      <main>
-        <Hero />
-        <Modules />
-        <AIFeatures />
-        <WhyUs />
-        <ReplaceTools />
-        <CTA />
-      </main>
-      <Footer />
-    </div>
+    <ReactLenis root options={{ lerp: 0.1, duration: 1.5, smoothWheel: true }}>
+      <div className="min-h-screen">
+        <Header />
+        <main>
+          <Hero />
+          <Modules />
+          <AIFeatures />
+          <WhyUs />
+          <ReplaceTools />
+          <CTA />
+        </main>
+        <Footer />
+      </div>
+    </ReactLenis>
   );
 }

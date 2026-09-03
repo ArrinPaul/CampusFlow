@@ -126,15 +126,12 @@ export default function AttendancePage() {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Attendance Tracker</h1>
-          <p className="text-muted-foreground mt-1">Track attendance and get AI-powered risk alerts</p>
-        </div>
+    <div className="max-w-7xl mx-auto h-[calc(100vh-6rem)] flex flex-col">
+      <div className="flex items-center justify-between flex-shrink-0 mb-6">
+        <h1 className="text-2xl font-bold text-foreground">Attendance Tracker</h1>
         <button 
           onClick={() => fetchAttendance(false)}
-          className="p-2 hover:bg-accent rounded-full text-muted-foreground hover:text-foreground cursor-pointer"
+          className="p-1.5 hover:bg-accent rounded-[10px] text-muted-foreground hover:text-foreground transition-standard cursor-pointer"
         >
           <RefreshCw className="w-5 h-5" />
         </button>
@@ -152,7 +149,7 @@ export default function AttendancePage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0 overflow-y-auto pb-6 pr-1">
         {/* Attendance Form */}
         <div className="bg-white border border-border rounded-[10px] p-5 shadow-sm h-fit">
           <h3 className="font-semibold text-foreground text-base mb-4 flex items-center gap-2">
@@ -161,7 +158,7 @@ export default function AttendancePage() {
           </h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-foreground mb-1.5 uppercase tracking-wider">
+              <label className="block text-sm font-medium text-foreground mb-1.5">
                 Subject Name *
               </label>
               <input
@@ -175,7 +172,7 @@ export default function AttendancePage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-foreground mb-1.5 uppercase tracking-wider">
+                <label className="block text-sm font-medium text-foreground mb-1.5">
                   Total Classes *
                 </label>
                 <input
@@ -189,7 +186,7 @@ export default function AttendancePage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-foreground mb-1.5 uppercase tracking-wider">
+                <label className="block text-sm font-medium text-foreground mb-1.5">
                   Attended *
                 </label>
                 <input
@@ -204,7 +201,7 @@ export default function AttendancePage() {
               </div>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-foreground mb-1.5 uppercase tracking-wider">
+              <label className="block text-sm font-medium text-foreground mb-1.5">
                 Required Attendance Threshold (%)
               </label>
               <input
@@ -221,7 +218,7 @@ export default function AttendancePage() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-2 bg-primary text-primary-foreground font-semibold rounded-[10px] hover:opacity-90 transition-standard cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
+              className="inline-flex w-full items-center justify-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-medium rounded-[10px] hover:opacity-90 transition-standard cursor-pointer disabled:opacity-50"
             >
               {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
               Save Attendance
@@ -240,7 +237,7 @@ export default function AttendancePage() {
             <div className="bg-white border border-border rounded-[10px] p-12 text-center shadow-sm">
               <BarChart3 className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-foreground mb-2">No attendance records</h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground mb-4">
                 Add your classes to assess your current percentages and skip-class budgets!
               </p>
             </div>
@@ -256,14 +253,14 @@ export default function AttendancePage() {
                 return (
                   <div
                     key={record.id}
-                    className={`bg-white border rounded-[10px] p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 transition-all hover:shadow-md ${
+                    className={`bg-white border rounded-[10px] p-5 shadow-sm flex items-start justify-between gap-4 transition-all hover:shadow-md ${
                       isUnderThreshold ? "border-destructive/30" : "border-border"
                     }`}
                   >
                     <div className="space-y-2 flex-1">
                       <div className="flex items-center gap-3">
                         <h4 className="font-bold text-foreground text-lg">{record.subject}</h4>
-                        <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${
+                        <span className={`inline-block px-2 py-0.5 text-xs font-semibold rounded-[10px] ${
                           isUnderThreshold 
                             ? "bg-destructive/15 text-destructive" 
                             : "bg-green-500/15 text-green-600"
@@ -315,18 +312,18 @@ export default function AttendancePage() {
                       )}
                     </div>
 
-                    <div className="flex md:flex-col items-center justify-end gap-2 flex-shrink-0 border-t md:border-t-0 pt-4 md:pt-0 border-dashed border-border">
+                    <div className="flex flex-col items-center justify-start gap-2 flex-shrink-0">
                       <button
                         onClick={() => handleRefreshAlert(record)}
                         disabled={analyzingId === record.id}
-                        className="p-2 hover:bg-accent rounded-full text-muted-foreground hover:text-foreground transition-standard cursor-pointer"
+                        className="p-1.5 hover:bg-accent rounded-[10px] text-muted-foreground hover:text-foreground transition-standard cursor-pointer"
                         title="Recheck risk assessment"
                       >
                         <RefreshCw className={`w-4 h-4 ${analyzingId === record.id ? "animate-spin" : ""}`} />
                       </button>
                       <button
                         onClick={() => handleDelete(record.id)}
-                        className="p-2 hover:bg-destructive/10 rounded-full text-muted-foreground hover:text-destructive transition-standard cursor-pointer"
+                        className="p-1.5 hover:bg-destructive/10 rounded-[10px] text-muted-foreground hover:text-destructive transition-standard cursor-pointer"
                         title="Delete subject record"
                       >
                         <Trash2 className="w-4 h-4" />

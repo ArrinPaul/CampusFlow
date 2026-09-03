@@ -108,7 +108,7 @@ export function WhiteboardList({
                             e.stopPropagation();
                             onDeleteBoard(wb.id);
                           }}
-                          className="p-1.5 hover:bg-red-50 text-muted-foreground hover:text-red-500 rounded-[6px] transition-colors"
+                          className="p-1.5 hover:bg-destructive/10 text-muted-foreground hover:text-destructive rounded-[6px] transition-colors"
                           title="Delete"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -135,7 +135,7 @@ export function WhiteboardList({
                     </button>
                     <button
                       onClick={cancelRename}
-                      className="p-1 bg-red-50 text-red-600 border border-red-200 rounded-[4px]"
+                      className="p-1 bg-destructive/10 text-destructive border border-destructive/20 rounded-[4px]"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>

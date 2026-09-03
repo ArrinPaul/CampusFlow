@@ -27,7 +27,7 @@ export function CampusNewsWidget() {
 
   if (loading) {
     return (
-      <div className="bg-white border border-border rounded-xl p-5 h-full">
+      <div className="bg-white border border-border rounded-[10px] p-5 h-full">
         <div className="h-4 bg-muted rounded animate-pulse w-1/3 mb-4" />
         {[1, 2, 3].map((i) => (
           <div key={i} className="h-16 bg-muted rounded animate-pulse mb-2" />
@@ -37,17 +37,17 @@ export function CampusNewsWidget() {
   }
 
   return (
-    <div className="bg-white border border-border rounded-xl p-5 card-hover h-full">
+    <div className="bg-white border border-border rounded-[10px] p-5 card-hover h-full">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-[10px] bg-primary/10 flex items-center justify-center">
             <Newspaper className="w-4 h-4 text-primary" />
           </div>
           <h3 className="font-semibold text-foreground text-sm">Campus News</h3>
         </div>
         <Link
           href="/dashboard/notices"
-          className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary text-white text-xs font-medium rounded-full hover:bg-primary/90 transition-colors"
+          className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary text-white text-xs font-medium rounded-[10px] hover:bg-primary/90 transition-colors"
         >
           <Plus className="w-3 h-3" /> Add Notice
         </Link>
@@ -62,7 +62,7 @@ export function CampusNewsWidget() {
           <p className="text-xs text-muted-foreground mb-3">Campus announcements will appear here</p>
           <Link
             href="/dashboard/notices"
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-white text-xs font-medium rounded-full hover:bg-primary/90 transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-white text-xs font-medium rounded-[10px] hover:bg-primary/90 transition-colors"
           >
             <Plus className="w-3.5 h-3.5" /> Add Your First Notice
           </Link>
@@ -71,8 +71,8 @@ export function CampusNewsWidget() {
         <>
           <div className="space-y-3 max-h-48 overflow-y-auto scrollbar-hide">
             {notices.slice(0, 4).map((notice) => (
-              <div key={notice.id} className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer">
-                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <div key={notice.id} className="flex items-start gap-3 p-2.5 rounded-[10px] hover:bg-muted/50 transition-colors cursor-pointer">
+                <div className="w-8 h-8 rounded-[10px] bg-primary/10 flex items-center justify-center flex-shrink-0">
                   {notice.ai_summary ? (
                     <CheckCircle className="w-4 h-4 text-primary" />
                   ) : (

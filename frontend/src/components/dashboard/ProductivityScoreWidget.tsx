@@ -1,24 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Lightbulb } from "lucide-react";
-import { api } from "@/lib/api";
 import type { Task, Attendance } from "@/features/types";
 
-export function ProductivityScoreWidget() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [attendance, setAttendance] = useState<Attendance[]>([]);
-  const [loading, setLoading] = useState(true);
+interface ProductivityScoreWidgetProps {
+  tasks: Task[];
+  attendance: Attendance[];
+}
 
-  useEffect(() => {
-    Promise.all([
-      api.get<{ tasks: Task[] }>("/api/tasks").catch(() => ({ tasks: [] })),
-      api.get<{ attendance: Attendance[] }>("/api/attendance").catch(() => ({ attendance: [] })),
-    ]).then(([taskRes, attRes]) => {
-      setTasks(taskRes.tasks || []);
-      setAttendance(attRes.attendance || []);
-    }).finally(() => setLoading(false));
-  }, []);
+export function ProductivityScoreWidget({ tasks = [], attendance = [] }: ProductivityScoreWidgetProps) {
 
   const calculateScore = () => {
     if (tasks.length === 0 && attendance.length === 0) return 0;
@@ -66,17 +56,8 @@ export function ProductivityScoreWidget() {
     suggestions.push("Add tasks and track attendance to see your productivity score");
   }
 
-  if (loading) {
-    return (
-      <div className="bg-white border border-border rounded-xl p-5 h-full">
-        <div className="h-4 bg-muted rounded animate-pulse w-1/3 mb-4" />
-        <div className="h-28 bg-muted rounded-full mx-auto w-28 animate-pulse" />
-      </div>
-    );
-  }
-
   return (
-    <div className="bg-white border border-border rounded-xl p-5 card-hover h-full">
+    <div className="bg-white border border-border rounded-[10px] p-5 card-hover h-full">
       <h3 className="font-semibold text-foreground text-sm mb-4">Productivity Score</h3>
 
       <div className="flex items-center justify-center mb-4">
@@ -101,7 +82,7 @@ export function ProductivityScoreWidget() {
 
       <div className="space-y-2">
         {suggestions.map((s, i) => (
-          <div key={i} className="flex items-start gap-2 p-2 bg-primary/5 rounded-lg">
+          <div key={i} className="flex items-start gap-2 p-2 bg-primary/5 rounded-[10px]">
             <Lightbulb className="w-3.5 h-3.5 text-primary mt-0.5 flex-shrink-0" />
             <p className="text-xs text-muted-foreground leading-relaxed">{s}</p>
           </div>

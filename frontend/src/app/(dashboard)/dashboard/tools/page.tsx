@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { 
   Sparkles, 
   FileText, 
@@ -15,6 +15,36 @@ import {
   Check 
 } from "lucide-react";
 import { api } from "@/lib/api";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import mermaid from "mermaid";
+
+mermaid.initialize({ startOnLoad: false, theme: 'default' });
+
+const MermaidChart = ({ chart }: { chart: string }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (ref.current && chart) {
+      try {
+        mermaid.render(`mermaid-${Math.random().toString(36).substr(2, 9)}`, chart).then(({ svg }) => {
+          if (ref.current) {
+            ref.current.innerHTML = svg;
+            // Make the SVG occupy more space
+            const svgElem = ref.current.querySelector('svg');
+            if (svgElem) {
+              svgElem.style.width = '100%';
+              svgElem.style.maxWidth = '1000px';
+              svgElem.style.height = 'auto';
+            }
+          }
+        });
+      } catch (e) {
+        console.error("Mermaid error:", e);
+      }
+    }
+  }, [chart]);
+  return <div ref={ref} className="w-full flex justify-center my-6 overflow-x-auto bg-white p-6 md:p-10 rounded-[16px] border border-border shadow-sm" />;
+};
 
 interface Tool {
   slug: string;
@@ -153,53 +183,42 @@ export default function SmartToolsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fdfaff] text-[#2d3a34] p-6 space-y-6 max-w-6xl mx-auto rounded-[16px]">
+    <div className="max-w-7xl mx-auto h-[calc(100vh-6rem)] flex flex-col">
       
-      {/* Premium Header */}
-      <div className="border-b border-[#e0d4f0] pb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 text-[#5b21b6] font-semibold text-sm uppercase tracking-wider">
-            <Sparkles className="w-4.5 h-4.5" />
-            AI Notebook Tools
-          </div>
-          <h1 className="text-3xl font-bold tracking-tight text-[#2d1055] mt-1 font-sans">
-            Smart Tools
-          </h1>
-          <p className="text-sm text-[#6b5a80] mt-1 font-serif italic">
-            Select an specialized AI workflow to generate summaries, explanation guides, study roadmaps, and diagrams.
-          </p>
-        </div>
+      {/* Page Header */}
+      <div className="flex items-center justify-between mb-6 flex-shrink-0">
+        <h1 className="text-2xl font-bold text-foreground">Smart Tools</h1>
       </div>
 
       {error && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-[10px] text-sm text-red-700">
+        <div className="p-4 mb-6 bg-destructive/10 border border-destructive/20 rounded-[10px] text-sm text-red-700 flex-shrink-0">
           {error}
         </div>
       )}
 
       {/* Grid of Tools */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 flex-1 min-h-0 pb-6">
         {TOOLS_CONFIG.map((tool) => {
           const Icon = tool.icon;
           return (
             <div
               key={tool.slug}
-              className="bg-white border border-[#e0d4f0] rounded-[12px] p-5 shadow-xs flex flex-col justify-between hover:shadow-md transition-all h-full"
+              className="bg-white border border-border rounded-[12px] p-6 shadow-sm transition-all hover:shadow-lg flex flex-col justify-between h-full"
             >
               <div>
-                <div className="w-10 h-10 rounded-[10px] bg-[#f3eefa] border border-[#e0d4f0] flex items-center justify-center text-[#5b21b6] mb-4">
-                  <Icon className="w-5 h-5" />
+                <div className="w-12 h-12 rounded-[12px] bg-primary/10 border border-border flex items-center justify-center text-primary mb-4">
+                  <Icon className="w-6 h-6" />
                 </div>
-                <h3 className="font-semibold text-[#2d1055] text-base mb-2 font-sans">
+                <h3 className="font-bold text-foreground text-lg mb-1.5">
                   {tool.title}
                 </h3>
-                <p className="text-xs text-[#6b5a80] mb-6 leading-relaxed font-sans">
+                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
                   {tool.description}
                 </p>
               </div>
               <button
                 onClick={() => handleOpenTool(tool)}
-                className="w-full py-2 bg-[#f3eefa] border border-[#e0d4f0] hover:bg-[#5b21b6] hover:text-white hover:border-[#5b21b6] text-[#5b21b6] font-semibold rounded-[10px] text-xs transition-standard cursor-pointer text-center"
+                className="w-full py-2.5 mt-4 bg-primary/5 border border-border hover:bg-primary hover:text-white hover:border-primary text-primary font-semibold rounded-[10px] text-sm transition-standard cursor-pointer text-center"
               >
                 Launch Tool
               </button>
@@ -211,19 +230,14 @@ export default function SmartToolsPage() {
       {/* Modal Overlay */}
       {activeTool && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
-          <div className="bg-[#fdfaff] border border-[#e0d4f0] rounded-[12px] shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 flex flex-col">
+          <div className="bg-white rounded-[16px] border border-border shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 flex flex-col">
             
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-[#e0d4f0] pb-4 mb-4">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-[8px] bg-[#f3eefa] border border-[#e0d4f0] flex items-center justify-center text-[#5b21b6]">
-                  <activeTool.icon className="w-4.5 h-4.5" />
-                </div>
-                <h2 className="text-lg font-bold text-[#2d1055] font-sans">{activeTool.title}</h2>
-              </div>
+            <div className="flex items-center justify-between border-b border-border pb-4 mb-4">
+              <h2 className="text-lg font-bold text-foreground">{activeTool.title}</h2>
               <button 
                 onClick={handleCloseTool}
-                className="p-1 hover:bg-accent rounded-full text-muted-foreground hover:text-foreground transition-standard cursor-pointer"
+                className="p-1 hover:bg-accent rounded-full text-muted-foreground transition-standard cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -232,33 +246,33 @@ export default function SmartToolsPage() {
             {/* Modal Body */}
             <div className="space-y-4 flex-1">
               <div>
-                <label className="block text-xs font-semibold text-[#4c1d95] mb-1.5 uppercase tracking-wider">
+                <label className="block text-sm font-medium text-foreground mb-1.5">
                   Source Material / Text Input
                 </label>
                 <textarea
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  className="w-full h-36 px-3 py-2 bg-white border border-[#cfc0e0] rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-[#5b21b6] resize-none font-sans text-[#2d3a34] placeholder-[#b0a3c2]"
+                  className="w-full px-4 py-3 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-ring min-h-[200px] resize-y"
                   placeholder={activeTool.placeholder}
                 />
               </div>
 
               {/* Dynamic options fields */}
               {activeTool.slug === "study-schedule" && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-[#f3eefa] p-4 border border-[#e0d4f0] rounded-[10px]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-[#4c1d95] mb-1.5 uppercase tracking-wider">
+                    <label className="block text-sm font-medium text-foreground mb-1.5">
                       Target Exam Date
                     </label>
                     <input
                       type="date"
                       value={examDate}
                       onChange={(e) => setExamDate(e.target.value)}
-                      className="w-full px-3 py-2 border border-[#cfc0e0] rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-[#5b21b6] bg-white text-[#2d3a34]"
+                      className="w-full px-3 py-2 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-[#4c1d95] mb-1.5 uppercase tracking-wider">
+                    <label className="block text-sm font-medium text-foreground mb-1.5">
                       Daily Study Hours Limit
                     </label>
                     <input
@@ -267,24 +281,24 @@ export default function SmartToolsPage() {
                       max={24}
                       value={studyHours}
                       onChange={(e) => setStudyHours(Number(e.target.value))}
-                      className="w-full px-3 py-2 border border-[#cfc0e0] rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-[#5b21b6] bg-white text-[#2d3a34]"
+                      className="w-full px-3 py-2 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                     />
                   </div>
                 </div>
               )}
 
-              <div className="flex gap-3 justify-end border-t border-[#e0d4f0] pt-4">
+              <div className="flex gap-3 justify-end border-t border-border pt-4 mt-6">
                 <button
                   type="button"
                   onClick={handleCloseTool}
-                  className="px-4 py-2 border border-[#cfc0e0] text-[#2d3a34] font-medium rounded-[10px] hover:bg-[#f1ecf8] text-xs transition-standard cursor-pointer"
+                  className="px-4 py-2 border border-input text-foreground font-medium rounded-[10px] hover:bg-primary/10 text-xs transition-standard cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleProcess}
                   disabled={loading}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-[#5b21b6] hover:bg-[#4c1d95] text-white font-semibold rounded-[10px] text-xs transition-standard cursor-pointer disabled:opacity-50 shadow-xs"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-white font-semibold rounded-[10px] text-xs transition-standard cursor-pointer disabled:opacity-50 shadow-xs"
                 >
                   {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                   {activeTool.action}
@@ -293,27 +307,41 @@ export default function SmartToolsPage() {
 
               {/* Result output display */}
               {(result || loading) && (
-                <div className="mt-6 border-t border-[#e0d4f0] pt-6 space-y-3 relative">
+                <div className="mt-6 border-t border-border pt-6 space-y-3 relative">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs font-semibold text-[#6b5a80] uppercase tracking-wider">Generated Output</span>
+                    <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Generated Output</span>
                     {result && (
                       <button
                         onClick={handleCopy}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 border border-[#cfc0e0] hover:bg-[#f1ecf8] text-xs font-medium rounded-[8px] transition-standard cursor-pointer text-[#5b21b6]"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 border border-input hover:bg-primary/10 text-xs font-medium rounded-[10px] transition-standard cursor-pointer text-primary"
                       >
-                        {copied ? <Check className="w-3.5 h-3.5 text-purple-600" /> : <Copy className="w-3.5 h-3.5" />}
+                        {copied ? <Check className="w-3.5 h-3.5 text-primary" /> : <Copy className="w-3.5 h-3.5" />}
                         {copied ? "Copied!" : "Copy"}
                       </button>
                     )}
                   </div>
                   {loading ? (
                     <div className="flex flex-col items-center justify-center py-10">
-                      <Loader2 className="w-8 h-8 text-[#5b21b6] animate-spin mb-2" />
-                      <p className="text-sm text-[#6b5a80] font-serif italic">AI is processing your document...</p>
+                      <Loader2 className="w-8 h-8 text-primary animate-spin mb-2" />
+                      
                     </div>
                   ) : (
-                    <div className="bg-white border border-[#e0d4f0] rounded-[10px] p-5 text-sm text-[#2d3a34] whitespace-pre-wrap leading-relaxed max-h-[300px] overflow-y-auto font-serif shadow-xs">
-                      {result}
+                    <div className="bg-white border border-border rounded-[12px] p-6 md:p-8 text-base text-foreground max-h-[500px] overflow-y-auto shadow-inner prose prose-slate max-w-none prose-headings:text-primary prose-a:text-primary prose-li:my-0">
+                      <ReactMarkdown 
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          code(props) {
+                            const {children, className, node, ...rest} = props;
+                            const match = /language-(\w+)/.exec(className || '');
+                            if (match && match[1] === 'mermaid') {
+                              return <MermaidChart chart={String(children).replace(/\n$/, '')} />;
+                            }
+                            return <code {...rest} className={className}>{children}</code>;
+                          }
+                        }}
+                      >
+                        {result}
+                      </ReactMarkdown>
                     </div>
                   )}
                 </div>

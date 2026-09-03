@@ -1,12 +1,26 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Megaphone, Sparkles, Send, Calendar, Clock, Loader2, RefreshCw } from "lucide-react";
+import { Megaphone, Sparkles, Send, Calendar, Clock, Loader2, RefreshCw, Users, Bell } from "lucide-react";
 import { api } from "@/lib/api";
 import type { Notice } from "@/features/types";
 
+interface GroupEvent {
+  id: string;
+  group_id: string;
+  title: string;
+  event_date: string;
+  priority: string;
+  category: string;
+  raw_message: string;
+  created_at: string;
+  telegram_groups?: { name: string };
+}
+
 export default function NoticesPage() {
+  const [viewMode, setViewMode] = useState<"group" | "personal">("group");
   const [notices, setNotices] = useState<Notice[]>([]);
+  const [groupEvents, setGroupEvents] = useState<GroupEvent[]>([]);
   const [loading, setLoading] = useState(true);
   
   // Form input states
@@ -24,11 +38,16 @@ export default function NoticesPage() {
   const fetchNotices = async (showLoading = true) => {
     if (showLoading) setLoading(true);
     try {
-      const res = await api.get<{ notices: Notice[] }>("/api/notices");
-      setNotices(res.notices || []);
-      if (res.notices && res.notices.length > 0 && !activeNotice) {
-        // Default to showing the latest one
-        setActiveNotice(res.notices[0]);
+      const [noticesRes, eventsRes] = await Promise.all([
+        api.get<{ notices: Notice[] }>("/api/notices").catch(() => ({ notices: [] })),
+        api.get<{ events: GroupEvent[] }>("/api/groups/events").catch(() => ({ events: [] }))
+      ]);
+      setNotices(noticesRes.notices || []);
+      setGroupEvents(eventsRes.events || []);
+      
+      if (noticesRes.notices && noticesRes.notices.length > 0 && !activeNotice) {
+        // Default to showing the latest personal notice if none selected
+        setActiveNotice(noticesRes.notices[0]);
       }
     } catch (err) {
       console.error("Failed to fetch notices", err);
@@ -102,10 +121,23 @@ export default function NoticesPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Notice Summarizer</h1>
-        <p className="text-muted-foreground mt-1">Paste college notices and get AI-powered summaries</p>
+    <div className="max-w-7xl mx-auto h-[calc(100vh-6rem)] flex flex-col">
+      <div className="flex items-center justify-between flex-shrink-0 mb-6">
+        <h1 className="text-2xl font-bold text-foreground">Announcements</h1>
+        <div className="flex bg-muted/40 p-1 rounded-[10px] w-full max-w-sm">
+          <button 
+            onClick={() => setViewMode("group")} 
+            className={`flex-1 text-sm font-medium py-1.5 rounded-[8px] transition-standard flex items-center justify-center gap-2 ${viewMode === "group" ? "bg-white shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            <Users className="w-4 h-4" /> Group
+          </button>
+          <button 
+            onClick={() => setViewMode("personal")} 
+            className={`flex-1 text-sm font-medium py-1.5 rounded-[8px] transition-standard flex items-center justify-center gap-2 ${viewMode === "personal" ? "bg-white shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            <Sparkles className="w-4 h-4" /> Summarizer
+          </button>
+        </div>
       </div>
 
       {error && (
@@ -120,12 +152,50 @@ export default function NoticesPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {viewMode === "group" ? (
+        <div className="flex-1 overflow-y-auto pr-1 space-y-4 pb-6">
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-20">
+              <Loader2 className="w-6 h-6 text-primary animate-spin mb-2" />
+              <p className="text-sm text-muted-foreground">Loading announcements...</p>
+            </div>
+          ) : groupEvents.length === 0 ? (
+            <div className="bg-white border border-border rounded-[10px] p-12 text-center shadow-sm">
+              <Bell className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">No Group Announcements</h3>
+              <p className="text-sm text-muted-foreground">
+                Join a group via invite link to receive teacher announcements here.
+              </p>
+            </div>
+          ) : (
+            groupEvents.map(event => (
+              <div key={event.id} className="bg-white border border-border rounded-[10px] p-5 shadow-sm space-y-3 relative overflow-hidden group">
+                <div className="absolute top-0 left-0 w-1 h-full bg-primary" />
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium px-2 py-1 bg-primary/10 text-primary rounded-full inline-flex items-center gap-1.5">
+                    <Users className="w-3 h-3" />
+                    {event.telegram_groups?.name || "Unknown Group"}
+                  </span>
+                  <span className="text-xs text-muted-foreground font-mono">{new Date(event.created_at).toLocaleDateString()}</span>
+                </div>
+                <h3 className="font-bold text-foreground text-lg">{event.title}</h3>
+                <p className="text-sm text-muted-foreground whitespace-pre-line leading-relaxed">{event.raw_message}</p>
+                <div className="flex items-center gap-4 text-xs font-medium pt-3 border-t border-border mt-3">
+                  <div className="flex items-center gap-1.5 text-secondary"><Calendar className="w-3.5 h-3.5"/> Due: {new Date(event.event_date).toLocaleDateString()}</div>
+                  <div className="flex items-center gap-1.5 text-amber-600"><Megaphone className="w-3.5 h-3.5"/> {event.priority} Priority</div>
+                  <div className="flex items-center gap-1.5 text-purple-600"><Clock className="w-3.5 h-3.5"/> {event.category}</div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0 overflow-y-auto pb-6 pr-1">
         {/* Notice Form Input */}
         <div className="lg:col-span-2 space-y-4">
           <div className="bg-white border border-border rounded-[10px] p-5 shadow-sm space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-foreground mb-2">
+              <label className="block text-sm font-medium text-foreground mb-1.5">
                 Paste Notice Text *
               </label>
               <textarea
@@ -167,7 +237,7 @@ export default function NoticesPage() {
               <button
                 onClick={handleSummarize}
                 disabled={summarizing}
-                className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground font-semibold rounded-[10px] hover:opacity-90 transition-standard cursor-pointer disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-medium rounded-[10px] hover:opacity-90 transition-standard cursor-pointer disabled:opacity-50"
               >
                 {summarizing ? (
                   <>
@@ -197,12 +267,12 @@ export default function NoticesPage() {
                 <button
                   onClick={() => handleBroadcast(activeNotice.id)}
                   disabled={broadcastingId === activeNotice.id}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white text-xs font-semibold rounded-full transition-standard disabled:opacity-50 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-medium rounded-[10px] hover:opacity-90 transition-standard cursor-pointer disabled:opacity-50"
                 >
                   {broadcastingId === activeNotice.id ? (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
-                    <Send className="w-3.5 h-3.5" />
+                    <Send className="w-4 h-4" />
                   )}
                   {activeNotice.broadcast_status === "sent" ? "Re-Broadcast" : "Broadcast (TG)"}
                 </button>
@@ -241,9 +311,9 @@ export default function NoticesPage() {
             </h3>
             <button 
               onClick={() => fetchNotices(false)}
-              className="p-1 hover:bg-accent rounded-full text-muted-foreground hover:text-foreground cursor-pointer"
+              className="p-1.5 hover:bg-accent rounded-[10px] text-muted-foreground hover:text-foreground transition-standard cursor-pointer"
             >
-              <RefreshCw className="w-3.5 h-3.5" />
+              <RefreshCw className="w-4 h-4" />
             </button>
           </div>
 
@@ -253,10 +323,10 @@ export default function NoticesPage() {
               <p className="text-xs text-muted-foreground">Loading notices...</p>
             </div>
           ) : notices.length === 0 ? (
-            <div className="flex-1 flex flex-col items-center justify-center text-center py-20">
-              <Megaphone className="w-10 h-10 text-muted-foreground/60 mb-2" />
-              <p className="text-sm font-medium text-foreground">No notices yet</p>
-              <p className="text-xs text-muted-foreground mt-1 max-w-[180px]">
+            <div className="bg-white border border-border rounded-[10px] p-12 text-center shadow-sm my-auto">
+              <Megaphone className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">No notices yet</h3>
+              <p className="text-sm text-muted-foreground mb-4">
                 Paste your first announcement to generate history
               </p>
             </div>
@@ -280,7 +350,7 @@ export default function NoticesPage() {
                   </p>
                   <div className="flex items-center justify-between text-[10px] text-muted-foreground mt-1 pt-1 border-t border-dashed border-border w-full">
                     <span>{new Date(notice.created_at).toLocaleDateString()}</span>
-                    <span className={`px-1.5 py-0.5 rounded-full font-medium ${
+                    <span className={`inline-block px-2 py-0.5 text-xs font-semibold rounded-[10px] ${
                       notice.broadcast_status === "sent" 
                         ? "bg-green-500/15 text-green-600" 
                         : notice.broadcast_status === "failed"
@@ -296,6 +366,7 @@ export default function NoticesPage() {
           )}
         </div>
       </div>
+      )}
     </div>
   );
 }

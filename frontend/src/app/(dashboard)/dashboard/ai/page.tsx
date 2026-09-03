@@ -20,7 +20,7 @@ export default function AiAssistantPage() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Hello! I am your CampusFlow AI study assistant. How can I help you organize your schedule, explain academic topics, or prepare for exams today?"
+      content: "Hello! I am Uki, your UniKit AI study assistant. How can I help you organize your schedule, explain academic topics, or prepare for exams today?"
     }
   ]);
   const [input, setInput] = useState("");
@@ -70,12 +70,11 @@ export default function AiAssistantPage() {
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto flex flex-col h-[calc(100vh-120px)]">
-      <div>
+      <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
           <Bot className="w-6 h-6 text-primary" />
           AI Assistant
         </h1>
-        <p className="text-muted-foreground mt-1">Get instant answers, study tips, or homework guidance</p>
       </div>
 
       {/* Main chat card */}

@@ -7,14 +7,14 @@ export function useSidebar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem("campusflow_sidebar_collapsed");
+    const stored = localStorage.getItem("UniKit_sidebar_collapsed");
     if (stored === "true") setIsCollapsed(true);
   }, []);
 
   const toggleCollapse = useCallback(() => {
     setIsCollapsed((prev) => {
       const next = !prev;
-      localStorage.setItem("campusflow_sidebar_collapsed", String(next));
+      localStorage.setItem("UniKit_sidebar_collapsed", String(next));
       return next;
     });
   }, []);

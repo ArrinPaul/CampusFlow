@@ -64,9 +64,8 @@ export default function WhiteboardPage() {
   return (
     <div className="space-y-4 h-full relative">
       {!activeBoardId ? (
-        <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <PenTool className="w-6 h-6 text-primary" />
+        <div className="max-w-7xl mx-auto h-[calc(100vh-6rem)] flex flex-col">
+          <div className="flex items-center justify-between flex-shrink-0 mb-6">
             <h1 className="text-2xl font-bold text-foreground">Whiteboard</h1>
           </div>
           {loading && whiteboards.length === 0 ? (
@@ -74,13 +73,15 @@ export default function WhiteboardPage() {
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
           ) : (
-            <WhiteboardList
-              whiteboards={whiteboards}
-              onSelectBoard={setActiveBoardId}
-              onCreateBoard={handleCreateBoard}
-              onDeleteBoard={handleDeleteBoard}
-              onRenameBoard={handleRenameBoard}
-            />
+            <div className="flex-1 overflow-y-auto min-h-0 pr-1 pb-6">
+              <WhiteboardList
+                whiteboards={whiteboards}
+                onSelectBoard={setActiveBoardId}
+                onCreateBoard={handleCreateBoard}
+                onDeleteBoard={handleDeleteBoard}
+                onRenameBoard={handleRenameBoard}
+              />
+            </div>
           )}
         </div>
       ) : (
@@ -96,30 +97,35 @@ export default function WhiteboardPage() {
 
       {/* Create Whiteboard In-App Modal */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="bg-white border border-border rounded-[12px] p-6 w-full max-w-md shadow-xl animate-in zoom-in-95 duration-200 mx-4">
-            <h3 className="text-lg font-semibold text-foreground mb-1">Create New Whiteboard</h3>
-            <p className="text-xs text-muted-foreground mb-4">Enter a title for your collaborative visual workspace.</p>
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
+          <div className="bg-white rounded-[12px] border border-border shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 flex flex-col">
+            <div className="flex items-center justify-between border-b border-border pb-4 mb-4">
+              <h2 className="text-lg font-bold text-foreground">Create New Whiteboard</h2>
+            </div>
+            
             <form onSubmit={submitCreateBoard} className="space-y-4">
-              <input
-                type="text"
-                value={newBoardTitle}
-                onChange={(e) => setNewBoardTitle(e.target.value)}
-                placeholder="e.g. System Architecture Diagram"
-                className="w-full px-3 py-2 border border-border rounded-[8px] text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                autoFocus
-              />
-              <div className="flex justify-end gap-3 pt-2">
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1.5">Whiteboard Title</label>
+                <input
+                  type="text"
+                  value={newBoardTitle}
+                  onChange={(e) => setNewBoardTitle(e.target.value)}
+                  placeholder="e.g. System Architecture Diagram"
+                  className="w-full px-3 py-2 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  autoFocus
+                />
+              </div>
+              <div className="flex gap-3 justify-end border-t border-border pt-4 mt-6">
                 <button
                   type="button"
                   onClick={() => setIsCreateModalOpen(false)}
-                  className="px-4 py-2 border border-border hover:bg-muted text-muted-foreground rounded-[8px] text-sm font-medium transition-colors cursor-pointer"
+                  className="px-4 py-2 border border-border hover:bg-muted text-muted-foreground rounded-[10px] text-sm font-medium transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-primary text-primary-foreground rounded-[8px] text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer"
+                  className="px-4 py-2 bg-primary text-primary-foreground rounded-[10px] text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer"
                 >
                   Create Workspace
                 </button>
@@ -131,22 +137,24 @@ export default function WhiteboardPage() {
 
       {/* Delete Confirmation In-App Modal */}
       {deleteConfirmId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="bg-white border border-border rounded-[12px] p-6 w-full max-w-md shadow-xl animate-in zoom-in-95 duration-200 mx-4">
-            <h3 className="text-lg font-semibold text-foreground mb-1">Delete Whiteboard</h3>
-            <p className="text-xs text-muted-foreground mb-4">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
+          <div className="bg-white rounded-[12px] border border-border shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 flex flex-col">
+            <div className="flex items-center justify-between border-b border-border pb-4 mb-4">
+              <h2 className="text-lg font-bold text-foreground">Delete Whiteboard</h2>
+            </div>
+            <p className="text-sm text-muted-foreground mb-4">
               Are you sure you want to delete "{whiteboards.find(w => w.id === deleteConfirmId)?.title || 'this whiteboard'}"? This action is permanent and cannot be undone.
             </p>
-            <div className="flex justify-end gap-3 pt-2">
+            <div className="flex gap-3 justify-end border-t border-border pt-4 mt-6">
               <button
                 onClick={() => setDeleteConfirmId(null)}
-                className="px-4 py-2 border border-border hover:bg-muted text-muted-foreground rounded-[8px] text-sm font-medium transition-colors cursor-pointer"
+                className="px-4 py-2 border border-border hover:bg-muted text-muted-foreground rounded-[10px] text-sm font-medium transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmDeleteBoard}
-                className="px-4 py-2 bg-red-500 text-white rounded-[8px] text-sm font-medium hover:bg-red-600 transition-colors cursor-pointer"
+                className="px-4 py-2 bg-destructive text-white rounded-[10px] text-sm font-medium hover:opacity-90 transition-colors cursor-pointer"
               >
                 Delete Permanently
               </button>

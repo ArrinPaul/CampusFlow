@@ -19,19 +19,22 @@ import { QuoteWidget } from "@/components/dashboard/QuoteWidget";
 import { MonthlyCalendarWidget } from "@/components/dashboard/MonthlyCalendarWidget";
 import { ListTodo, Clock, CheckCircle, CalendarDays } from "lucide-react";
 import { api } from "@/lib/api";
-import type { Task } from "@/features/types";
+import type { Task, Attendance } from "@/features/types";
 
 export default function DashboardPage() {
   const { user } = useAuth();
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [attendance, setAttendance] = useState<Attendance[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api
-      .get<{ tasks: Task[] }>("/api/tasks")
-      .then((res) => setTasks(res.tasks || []))
-      .catch(() => setTasks([]))
-      .finally(() => setLoading(false));
+    Promise.all([
+      api.get<{ tasks: Task[] }>("/api/tasks").catch(() => ({ tasks: [] })),
+      api.get<{ attendance: Attendance[] }>("/api/attendance").catch(() => ({ attendance: [] }))
+    ]).then(([taskRes, attRes]) => {
+      setTasks(taskRes.tasks || []);
+      setAttendance(attRes.attendance || []);
+    }).finally(() => setLoading(false));
   }, []);
 
   const getGreeting = () => {
@@ -109,35 +112,35 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         <MonthlyCalendarWidget />
         <div className="grid grid-cols-1 gap-6">
-          <TodayTasksWidget />
-          <UpcomingDeadlinesWidget />
+          <TodayTasksWidget tasks={tasks} />
+          <UpcomingDeadlinesWidget tasks={tasks} />
         </div>
       </div>
 
       {/* ── Row 3: Attendance  |  Study Streak ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-        <AttendanceWidget />
-        <StudyStreakWidget />
+        <AttendanceWidget attendance={attendance} />
+        <StudyStreakWidget attendance={attendance} />
       </div>
 
       {/* ── Row 4: Quick Actions  |  Weekly Progress  |  Upcoming Events ── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
         <QuickActionsWidget />
-        <WeeklyProgressWidget />
+        <WeeklyProgressWidget tasks={tasks} />
         <UpcomingEventsWidget />
       </div>
 
       {/* ── Row 5: Recent Activity  |  Productivity Score  |  Focus Timer ── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
         <RecentActivityWidget />
-        <ProductivityScoreWidget />
+        <ProductivityScoreWidget tasks={tasks} attendance={attendance} />
         <FocusTimerWidget />
       </div>
 
       {/* ── Row 6: Campus News  |  Achievements ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
         <CampusNewsWidget />
-        <AchievementWidget />
+        <AchievementWidget tasks={tasks} attendance={attendance} />
       </div>
 
       {/* ── Row 7: Quote (full-width centered) ── */}

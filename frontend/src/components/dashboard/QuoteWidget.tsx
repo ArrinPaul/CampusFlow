@@ -15,7 +15,7 @@ export function QuoteWidget() {
       .get<{ tip: string }>("/api/ai/tip")
       .then((res) => {
         setQuote(res.tip);
-        setAuthor("CampusFlow AI");
+        setAuthor("UniKit AI");
       })
       .catch(() => {
         setQuote("The only way to do great work is to love what you do.");
@@ -29,15 +29,15 @@ export function QuoteWidget() {
   }, []);
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-primary to-primary/80 rounded-xl p-6 card-hover h-full text-white">
+    <div className="relative overflow-hidden bg-gradient-to-br from-primary to-primary/80 rounded-[10px] p-6 card-hover h-full text-white">
       <div className="relative">
         <div className="flex items-center justify-between mb-4">
-          <div className="w-10 h-10 rounded-lg bg-white/15 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-[10px] bg-white/15 flex items-center justify-center">
             <Quote className="w-5 h-5" />
           </div>
           <button
             onClick={fetchQuote}
-            className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center hover:bg-white/25 transition-all"
+            className="w-8 h-8 rounded-[10px] bg-white/15 flex items-center justify-center hover:bg-white/25 transition-all"
             aria-label="New quote"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />

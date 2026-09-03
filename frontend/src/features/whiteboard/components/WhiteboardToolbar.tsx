@@ -128,7 +128,7 @@ export const WhiteboardToolbar = memo(function WhiteboardToolbar({
               key={c}
               onClick={() => onSetFillColor(c)}
               onContextMenu={e => { e.preventDefault(); onSetStrokeColor(c); }}
-              className="w-4 h-4 rounded-sm border border-border/50 hover:scale-125 transition-transform cursor-pointer"
+              className="w-4 h-4 rounded-[10px] border border-border/50 hover:scale-125 transition-transform cursor-pointer"
               style={{ background: c }}
               title={`Left: fill | Right: stroke\n${c}`}
             />
@@ -145,7 +145,7 @@ export const WhiteboardToolbar = memo(function WhiteboardToolbar({
         <button onClick={onRedo} title="Redo (Ctrl+Y)" className="p-2 rounded-[6px] text-muted-foreground hover:bg-muted cursor-pointer">
           <Redo2 className="w-4 h-4" />
         </button>
-        <button onClick={onClear} title="Clear canvas" className="p-2 rounded-[6px] text-muted-foreground hover:bg-muted hover:text-red-500 cursor-pointer">
+        <button onClick={onClear} title="Clear canvas" className="p-2 rounded-[6px] text-muted-foreground hover:bg-muted hover:text-destructive cursor-pointer">
           <Trash2 className="w-4 h-4" />
         </button>
       </div>

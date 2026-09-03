@@ -39,12 +39,9 @@ export default function AutomationsPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="max-w-4xl space-y-8 mx-auto">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Automations</h1>
-          <p className="text-muted-foreground mt-1">View n8n workflow execution logs and triggers</p>
-        </div>
+        <h1 className="text-2xl font-bold text-foreground">Automations</h1>
         <button
           onClick={() => fetchLogs(false)}
           className="p-2 hover:bg-accent rounded-full text-muted-foreground hover:text-foreground cursor-pointer"

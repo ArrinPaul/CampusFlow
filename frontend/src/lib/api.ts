@@ -15,7 +15,7 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   } else if (typeof window !== "undefined") {
-    const storedToken = localStorage.getItem("campusflow_token");
+    const storedToken = localStorage.getItem("UniKit_token");
     if (storedToken) {
       headers["Authorization"] = `Bearer ${storedToken}`;
     }
@@ -48,6 +48,9 @@ export const api = {
 
   put: <T>(endpoint: string, body?: unknown, options?: RequestOptions) =>
     request<T>(endpoint, { ...options, method: "PUT", body: body ? JSON.stringify(body) : undefined }),
+
+  patch: <T>(endpoint: string, body?: unknown, options?: RequestOptions) =>
+    request<T>(endpoint, { ...options, method: "PATCH", body: body ? JSON.stringify(body) : undefined }),
 
   delete: <T>(endpoint: string, options?: RequestOptions) =>
     request<T>(endpoint, { ...options, method: "DELETE" }),

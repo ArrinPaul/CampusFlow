@@ -18,6 +18,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const isWhiteboard = pathname?.startsWith("/dashboard/whiteboard");
+  const isDashboardRoot = pathname === "/dashboard";
 
   useEffect(() => {
     if (!loading && !user) {
@@ -51,13 +52,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       )}
 
       <div className="flex-1 flex flex-col min-h-screen">
-        <main className={`flex-1 overflow-auto ${!isDesktop && !isWhiteboard ? "pb-16" : ""}`}>
+        <main className={`flex-1 overflow-auto ${!isDesktop && isDashboardRoot ? "pb-16" : ""}`}>
           <div className={isWhiteboard ? "p-4" : "p-6"}>{children}</div>
         </main>
 
-        {isDesktop && !isWhiteboard && <DashboardFooter />}
+        {isDesktop && isDashboardRoot && <DashboardFooter />}
 
-        {!isDesktop && !isWhiteboard && <MobileFooter onMenuClick={openMobile} />}
+        {!isDesktop && isDashboardRoot && <MobileFooter onMenuClick={openMobile} />}
       </div>
     </div>
   );

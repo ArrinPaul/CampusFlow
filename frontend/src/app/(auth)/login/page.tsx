@@ -19,7 +19,7 @@ type User = {
 };
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, devLogin } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -37,7 +37,7 @@ export default function LoginPage() {
     }
 
     if (token) {
-      localStorage.setItem("campusflow_token", token);
+      localStorage.setItem("UniKit_token", token);
       window.location.href = "/dashboard";
     }
   }, []);
@@ -66,14 +66,14 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-border p-8 shadow-sm">
+    <div className="bg-white rounded-[10px] border border-border p-8 shadow-sm">
       <div className="mb-6">
         <h1 className="text-xl font-bold text-foreground" style={{ letterSpacing: "-0.02em" }}>Login to continue</h1>
         <p className="text-sm text-muted-foreground mt-1">Use your email or service</p>
       </div>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+        <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-[10px] text-sm text-destructive">
           {error}
         </div>
       )}
@@ -88,7 +88,7 @@ export default function LoginPage() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            className="w-full px-3 py-2 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             placeholder="you@example.com"
             required
           />
@@ -104,7 +104,7 @@ export default function LoginPage() {
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 pr-10 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-3 py-2 pr-10 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               placeholder="••••••••"
               required
             />
@@ -143,6 +143,15 @@ export default function LoginPage() {
       </div>
 
       <div className="space-y-3">
+        {process.env.NEXT_PUBLIC_DEV_MODE === "true" && (
+          <button
+            onClick={devLogin}
+            type="button"
+            className="w-full py-2.5 bg-zinc-900 text-white rounded-full text-sm font-medium hover:bg-zinc-800 transition-standard flex items-center justify-center gap-2"
+          >
+            Developer Login (Bypass)
+          </button>
+        )}
         <button
           onClick={handleGoogleLogin}
           className="w-full py-2.5 border border-border rounded-full text-sm font-medium text-foreground hover:bg-muted transition-standard flex items-center justify-center gap-2"

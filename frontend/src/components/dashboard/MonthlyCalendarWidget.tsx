@@ -149,7 +149,7 @@ export function MonthlyCalendarWidget() {
 
   if (loading) {
     return (
-      <div className="bg-white border border-border rounded-xl p-5 h-full">
+      <div className="bg-white border border-border rounded-[10px] p-5 h-full">
         <div className="h-4 bg-muted rounded animate-pulse w-1/3 mb-4" />
         <div className="h-64 bg-muted rounded animate-pulse" />
       </div>
@@ -157,34 +157,34 @@ export function MonthlyCalendarWidget() {
   }
 
   return (
-    <div className="bg-white border border-border rounded-xl p-5 card-hover h-full">
+    <div className="bg-white border border-border rounded-[10px] p-5 card-hover h-full">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-[10px] bg-primary/10 flex items-center justify-center">
             <CalendarDays className="w-4 h-4 text-primary" />
           </div>
           <h3 className="font-semibold text-foreground text-sm">Calendar</h3>
           {calendarConnected && (
-            <span className="inline-flex items-center gap-1 text-[10px] font-medium bg-emerald-50 text-emerald-700 rounded-full px-2 py-0.5">
+            <span className="inline-flex items-center gap-1 text-[10px] font-medium bg-emerald-50 text-emerald-700 rounded-[10px] px-2 py-0.5">
               <Link2 className="w-3 h-3" />
               Google Synced
             </span>
           )}
         </div>
         <div className="flex items-center gap-1">
-          <button onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-muted transition-colors" aria-label="Previous month">
+          <button onClick={prevMonth} className="p-1.5 rounded-[10px] hover:bg-muted transition-colors" aria-label="Previous month">
             <ChevronLeft className="w-4 h-4 text-muted-foreground" />
           </button>
           <span className="text-sm font-medium text-foreground px-2 min-w-[120px] text-center">
             {MONTH_NAMES[month]} {year}
           </span>
-          <button onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-muted transition-colors" aria-label="Next month">
+          <button onClick={nextMonth} className="p-1.5 rounded-[10px] hover:bg-muted transition-colors" aria-label="Next month">
             <ChevronRight className="w-4 h-4 text-muted-foreground" />
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-px bg-border rounded-lg overflow-hidden mb-4">
+      <div className="grid grid-cols-7 gap-px bg-border rounded-[10px] overflow-hidden mb-4">
         {DAY_NAMES.map((day) => (
           <div key={day} className="bg-muted/50 py-1.5 text-center text-[10px] font-semibold text-muted-foreground uppercase">
             {day}
@@ -235,7 +235,7 @@ export function MonthlyCalendarWidget() {
       {!calendarConnected && (
         <button
           onClick={handleConnectCalendar}
-          className="w-full mb-3 flex items-center justify-center gap-2 py-2 px-3 rounded-lg border border-dashed border-blue-300 bg-blue-50/50 text-blue-600 text-xs font-medium hover:bg-blue-50 transition-colors"
+          className="w-full mb-3 flex items-center justify-center gap-2 py-2 px-3 rounded-[10px] border border-dashed border-blue-300 bg-blue-50/50 text-blue-600 text-xs font-medium hover:bg-blue-50 transition-colors"
         >
           <CalendarDays className="w-3.5 h-3.5" />
           Connect Google Calendar
@@ -254,7 +254,7 @@ export function MonthlyCalendarWidget() {
               {selectedItems.map((item) => (
                 <div
                   key={item.id}
-                  className={`flex items-center gap-2 p-2 rounded-lg text-xs ${
+                  className={`flex items-center gap-2 p-2 rounded-[10px] text-xs ${
                     item.type === "google"
                       ? "bg-blue-50"
                       : item.status === "completed"

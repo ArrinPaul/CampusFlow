@@ -111,7 +111,7 @@ export function WhiteboardCanvas({ whiteboardId, title, onBack }: WhiteboardCanv
           
           {/* Cloud Auto-save indicator */}
           {whiteboardId && (
-            <div className="flex items-center gap-1 text-[10px] text-muted-foreground ml-4 bg-muted px-2 py-0.5 rounded-full font-medium">
+            <div className="flex items-center gap-1 text-[10px] text-muted-foreground ml-4 bg-muted px-2 py-0.5 rounded-[10px] font-medium">
               {saveStatus === 'saving' && (
                 <>
                   <RefreshCw className="w-3 h-3 animate-spin text-primary" />
@@ -126,8 +126,8 @@ export function WhiteboardCanvas({ whiteboardId, title, onBack }: WhiteboardCanv
               )}
               {saveStatus === 'error' && (
                 <>
-                  <CloudRain className="w-3 h-3 text-red-500" />
-                  <span className="text-red-500">Save Error</span>
+                  <CloudRain className="w-3 h-3 text-destructive" />
+                  <span className="text-destructive">Save Error</span>
                 </>
               )}
               {saveStatus === 'idle' && (
@@ -214,7 +214,7 @@ export function WhiteboardCanvas({ whiteboardId, title, onBack }: WhiteboardCanv
               <div className="w-px h-4 bg-border mx-1" />
               <button
                 onClick={engine.deleteSelected}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-[6px] text-xs font-medium text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-[6px] text-xs font-medium text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
                 title="Delete selected (Delete / Backspace)"
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -316,7 +316,7 @@ export function WhiteboardCanvas({ whiteboardId, title, onBack }: WhiteboardCanv
       {engine.toast && (
         <div className="absolute top-16 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-white border border-border shadow-lg rounded-[10px] px-4 py-3 animate-in fade-in slide-in-from-top-4 duration-300">
           {engine.toast.type === 'error' ? (
-            <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
+            <AlertCircle className="w-4 h-4 text-destructive flex-shrink-0" />
           ) : engine.toast.type === 'success' ? (
             <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
           ) : (

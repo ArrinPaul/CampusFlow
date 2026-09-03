@@ -201,7 +201,7 @@ export const AiPanel = memo(function AiPanel({ isOpen, onToggle, shapes, onAddSh
         )}
 
         {error && (
-          <div className="px-3 py-2 bg-red-50 border border-red-200 rounded-[8px] text-xs text-red-600">
+          <div className="px-3 py-2 bg-destructive/10 border border-destructive/20 rounded-[8px] text-xs text-destructive">
             {error}
           </div>
         )}

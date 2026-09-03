@@ -82,7 +82,7 @@ export default function SettingsPage() {
 
     setSaving(true);
     try {
-      const token = localStorage.getItem("campusflow_token");
+      const token = localStorage.getItem("UniKit_token");
       const res = await api.put<{ student: typeof user }>("/api/auth/me", {
         name: name.trim(),
         branch,
