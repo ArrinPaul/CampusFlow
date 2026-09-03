@@ -57,3 +57,6 @@ n8n/data/
 
 # Backend
 backend/uploads/
+
+# UniKit reference repo (used as a migration source, not part of this repo's history)
+unikit/
