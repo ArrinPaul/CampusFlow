@@ -67,7 +67,7 @@ export function RecentActivityWidget() {
             <CheckCircle className="w-6 h-6 text-muted-foreground" />
           </div>
           <p className="text-sm font-medium text-foreground mb-1">No activity yet</p>
-          <p className="text-xs text-muted-foreground">Activity will appear here as you use UniKit</p>
+          <p className="text-xs text-muted-foreground">Activity will appear here as you use CampusFlow</p>
         </div>
       </div>
     );

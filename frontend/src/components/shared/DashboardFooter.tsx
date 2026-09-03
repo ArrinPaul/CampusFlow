@@ -18,7 +18,7 @@ export function DashboardFooter() {
                 <div className="w-8 h-8 rounded-[10px] bg-white/15 flex items-center justify-center">
                   <GraduationCap className="w-4 h-4 text-white" />
                 </div>
-                <span className="text-base font-bold text-white">UniKit</span>
+                <span className="text-base font-bold text-white">CampusFlow</span>
               </div>
               <p className="text-sm text-white/60 leading-relaxed max-w-xs">
                 AI-powered student hub. Never miss a deadline again.
@@ -59,7 +59,7 @@ export function DashboardFooter() {
 
           <div className="border-t border-white/10 pt-5 flex flex-col sm:flex-row items-center justify-between gap-3">
             <p className="text-xs text-white/50 flex items-center gap-1">
-              Made with <Heart className="w-3 h-3 text-white" /> UniKit Team &copy; {new Date().getFullYear()}
+              Made with <Heart className="w-3 h-3 text-white" /> CampusFlow Team &copy; {new Date().getFullYear()}
             </p>
             <button
               onClick={scrollToTop}

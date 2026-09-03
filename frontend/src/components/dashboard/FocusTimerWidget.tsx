@@ -127,11 +127,11 @@ export function FocusTimerWidget() {
   // Render Widget
   return (
     <>
-      <div 
+      <div
         className="relative overflow-hidden bg-gradient-to-br from-primary to-primary/80 rounded-[10px] p-5 card-hover h-full text-white cursor-pointer group transition-all"
         onClick={() => setIsExpanded(true)}
       >
-        <button 
+        <button
           className="absolute top-4 right-4 p-2 bg-white/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/20"
           onClick={(e) => { e.stopPropagation(); setIsExpanded(true); }}
         >

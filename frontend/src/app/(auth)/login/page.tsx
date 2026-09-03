@@ -37,7 +37,7 @@ export default function LoginPage() {
     }
 
     if (token) {
-      localStorage.setItem("UniKit_token", token);
+      localStorage.setItem("campusflow_token", token);
       window.location.href = "/dashboard";
     }
   }, []);

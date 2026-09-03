@@ -3,9 +3,7 @@
 CampusFlow is a production-grade, full-stack campus management and cognitive study assistant platform. It merges automated administrative tools—such as task scheduling, attendance risk metrics, Telegram notifications, and notice broadcasts—with a NotebookLM-inspired study workspace and a visual collaboration whiteboard.
 
 ---
-# Test Email : testcodestrom@gmail.com
-# Test Email id password: Test@123456
-# Sir Please use this email to test our project and to login and test our features
+
 
 
 

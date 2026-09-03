@@ -15,7 +15,7 @@ export function QuoteWidget() {
       .get<{ tip: string }>("/api/ai/tip")
       .then((res) => {
         setQuote(res.tip);
-        setAuthor("UniKit AI");
+        setAuthor("CampusFlow AI");
       })
       .catch(() => {
         setQuote("The only way to do great work is to love what you do.");

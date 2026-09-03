@@ -51,8 +51,10 @@ function Header() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-2">
-            <img src="/logo-ukit.png" alt="UniKit Logo" className="w-8 h-8 object-contain" />
-            <span className="text-xl font-bold text-foreground">UniKit</span>
+            <div className="w-8 h-8 rounded-[10px] bg-primary flex items-center justify-center">
+              <GraduationCap className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-xl font-bold text-foreground">CampusFlow</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-8">
@@ -192,7 +194,7 @@ function Hero() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed"
         >
-          UniKit unifies deadlines, attendance, notices, and AI tools so your academic life
+          CampusFlow unifies deadlines, attendance, notices, and AI tools so your academic life
           moves from chaos to clarity — automatically.
         </motion.p>
 
@@ -542,11 +544,11 @@ function AIFeatures() {
 }
 
 const comparisons = [
-  { feature: "Tool Management", traditional: "Multiple disconnected tools with separate logins", UniKit: "Single platform with integrated modules", icon: LayoutDashboard },
-  { feature: "Context Switching", traditional: "Constant switching between apps disrupts focus", UniKit: "Seamless workflow with everything in one place", icon: Zap },
-  { feature: "Reminders", traditional: "Manual calendar entries and phone alarms", UniKit: "Automatic Telegram alerts before deadlines", icon: Bell },
-  { feature: "Notice Processing", traditional: "Read entire long documents manually", UniKit: "AI-powered 3-bullet summaries in seconds", icon: FileText },
-  { feature: "Attendance Tracking", traditional: "Manual spreadsheet tracking and guesswork", UniKit: "Real-time per-subject risk alerts", icon: BarChart3 },
+  { feature: "Tool Management", traditional: "Multiple disconnected tools with separate logins", campusflow: "Single platform with integrated modules", icon: LayoutDashboard },
+  { feature: "Context Switching", traditional: "Constant switching between apps disrupts focus", campusflow: "Seamless workflow with everything in one place", icon: Zap },
+  { feature: "Reminders", traditional: "Manual calendar entries and phone alarms", campusflow: "Automatic Telegram alerts before deadlines", icon: Bell },
+  { feature: "Notice Processing", traditional: "Read entire long documents manually", campusflow: "AI-powered 3-bullet summaries in seconds", icon: FileText },
+  { feature: "Attendance Tracking", traditional: "Manual spreadsheet tracking and guesswork", campusflow: "Real-time per-subject risk alerts", icon: BarChart3 },
 ];
 
 function WhyUs() {
@@ -569,13 +571,13 @@ function WhyUs() {
         >
           <span className="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-semibold text-primary bg-primary/10 rounded-[10px] mb-4">
             <Shield className="w-3.5 h-3.5" />
-            WHY UniKit?
+            WHY CampusFlow?
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4 tracking-tight">
             Less Context Switching
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            Stop juggling multiple apps. UniKit puts everything you need in one place.
+            Stop juggling multiple apps. CampusFlow puts everything you need in one place.
           </p>
         </motion.div>
 
@@ -624,7 +626,7 @@ function WhyUs() {
                 <div className="w-10 h-10 rounded-[10px] bg-primary/10 flex items-center justify-center">
                   <CheckCircle className="w-5 h-5 text-primary" />
                 </div>
-                <h3 className="text-lg font-bold text-foreground">The UniKit Way</h3>
+                <h3 className="text-lg font-bold text-foreground">The CampusFlow Way</h3>
               </div>
               <div className="space-y-4">
                 {comparisons.map((row, i) => (
@@ -640,7 +642,7 @@ function WhyUs() {
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-foreground mb-0.5">{row.feature}</p>
-                      <p className="text-sm text-primary font-medium">{row.UniKit}</p>
+                      <p className="text-sm text-primary font-medium">{row.campusflow}</p>
                     </div>
                   </motion.div>
                 ))}
@@ -704,7 +706,7 @@ function ReplaceTools() {
         >
           <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4 tracking-tight">
             Replace Multiple Tools with{" "}
-            <span className="text-primary">UniKit</span>
+            <span className="text-primary">CampusFlow</span>
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto">
             One platform to rule them all. Stop paying for five different apps.
@@ -749,10 +751,10 @@ function ReplaceTools() {
             <div className="bg-white border-2 border-primary/20 rounded-[10px] p-6 shadow-lg shadow-primary/10">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 rounded-[10px] bg-primary flex items-center justify-center shadow-md shadow-primary/20">
-                  <img src="/logo-ukit.png" alt="UniKit Logo" className="w-6 h-6 object-contain" />
+                  <GraduationCap className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-foreground">UniKit</h3>
+                  <h3 className="text-xl font-bold text-foreground">CampusFlow</h3>
                   <p className="text-sm text-primary font-medium">All-in-one student hub</p>
                 </div>
               </div>
@@ -795,7 +797,7 @@ function CTA() {
               Free for Students
             </span>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight">
-              Start Building with UniKit Today
+              Start Building with CampusFlow Today
             </h2>
             <p className="text-white/80 max-w-xl mx-auto mb-8 leading-relaxed">
               Join students across India who never miss a deadline. Get started for free during our public beta and experience the full platform at no cost.
@@ -832,8 +834,10 @@ function Footer() {
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           <div>
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <img src="/logo-ukit.png" alt="UniKit Logo" className="w-6 h-6 object-contain" />
-              <span className="text-lg font-bold text-foreground">UniKit</span>
+              <div className="w-6 h-6 rounded-[8px] bg-primary flex items-center justify-center">
+                <GraduationCap className="w-4 h-4 text-white" />
+              </div>
+              <span className="text-lg font-bold text-foreground">CampusFlow</span>
             </Link>
             <p className="text-sm text-muted-foreground">
               AI-powered student hub for deadline management
@@ -863,7 +867,7 @@ function Footer() {
         </div>
         <div className="border-t border-border pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground">
-            &copy; 2025 UniKit. All rights reserved.
+            &copy; 2025 CampusFlow. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
             <a href="#" className="text-xs text-muted-foreground hover:text-foreground transition-standard">Privacy</a>

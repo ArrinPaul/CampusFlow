@@ -20,7 +20,7 @@ export default function AiAssistantPage() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Hello! I am Uki, your UniKit AI study assistant. How can I help you organize your schedule, explain academic topics, or prepare for exams today?"
+      content: "Hello! I'm your CampusFlow AI study assistant. How can I help you organize your schedule, explain academic topics, or prepare for exams today?"
     }
   ]);
   const [input, setInput] = useState("");

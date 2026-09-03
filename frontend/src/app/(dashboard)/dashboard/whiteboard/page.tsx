@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useWhiteboards } from '@/features/whiteboard/hooks/useWhiteboards';
 import { WhiteboardList } from '@/features/whiteboard/components/WhiteboardList';
 import { WhiteboardCanvas } from '@/features/whiteboard/components/WhiteboardCanvas';
-import { PenTool, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 export default function WhiteboardPage() {
   const {
@@ -102,7 +102,7 @@ export default function WhiteboardPage() {
             <div className="flex items-center justify-between border-b border-border pb-4 mb-4">
               <h2 className="text-lg font-bold text-foreground">Create New Whiteboard</h2>
             </div>
-            
+
             <form onSubmit={submitCreateBoard} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1.5">Whiteboard Title</label>

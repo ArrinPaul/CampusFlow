@@ -13,7 +13,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "UniKit — AI-Powered Student Hub",
+  title: "CampusFlow — AI-Powered Student Hub",
   description: "Never miss a deadline again. Smart reminders, AI summaries, and attendance tracking.",
 };
 

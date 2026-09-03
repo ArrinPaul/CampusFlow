@@ -125,14 +125,14 @@ export default function NoticesPage() {
       <div className="flex items-center justify-between flex-shrink-0 mb-6">
         <h1 className="text-2xl font-bold text-foreground">Announcements</h1>
         <div className="flex bg-muted/40 p-1 rounded-[10px] w-full max-w-sm">
-          <button 
-            onClick={() => setViewMode("group")} 
+          <button
+            onClick={() => setViewMode("group")}
             className={`flex-1 text-sm font-medium py-1.5 rounded-[8px] transition-standard flex items-center justify-center gap-2 ${viewMode === "group" ? "bg-white shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
           >
             <Users className="w-4 h-4" /> Group
           </button>
-          <button 
-            onClick={() => setViewMode("personal")} 
+          <button
+            onClick={() => setViewMode("personal")}
             className={`flex-1 text-sm font-medium py-1.5 rounded-[8px] transition-standard flex items-center justify-center gap-2 ${viewMode === "personal" ? "bg-white shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
           >
             <Sparkles className="w-4 h-4" /> Summarizer

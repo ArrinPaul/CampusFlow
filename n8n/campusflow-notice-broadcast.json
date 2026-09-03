@@ -1,0 +1,59 @@
+{
+  "name": "campusflow-notice-broadcast",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "notice",
+        "options": {}
+      },
+      "id": "node-webhook-notice",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.body.telegramUsername }}",
+        "text": "=📢 *New Campus Notice Broadcast* 📢\n\nHi {{ $json.body.studentName }},\n\nA new official announcement has been posted:\n📌 *Event:* {{ $json.body.eventTitle }}\n📅 *Date/Deadline:* {{ $json.body.eventDate || 'N/A' }}\n\n📋 *AI Summary:*\n{{ $json.body.aiSummary }}\n\nPlease review and take action if needed!",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "node-send-tg-notice",
+      "name": "Send Telegram Notice",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [350, 300],
+      "credentials": {
+        "telegramApi": {
+          "id": "h2Q6l1bxyZuXkLTL",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram Notice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "name": "campusflow"
+    }
+  ]
+}

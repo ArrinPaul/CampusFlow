@@ -1,0 +1,103 @@
+{
+  "name": "campusflow-deadline-reminder",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "deadline",
+        "options": {}
+      },
+      "id": "node-webhook-deadline",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const deadlineDate = new Date(this.item.json.body.deadline);\nconst reminderDate = new Date(deadlineDate.getTime() - 24 * 60 * 60 * 1000); // 24 hours before\n\nthis.item.json.reminderTime = reminderDate.toISOString();\nreturn this.item;"
+      },
+      "id": "node-calculate-reminder",
+      "name": "Calculate Reminder Time",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [320, 300]
+    },
+    {
+      "parameters": {
+        "resumeAmount": "={{ new Date($json.reminderTime).getTime() - Date.now() > 0 ? Math.floor((new Date($json.reminderTime).getTime() - Date.now()) / 1000) : 0 }}",
+        "resumeUnit": "seconds"
+      },
+      "id": "node-wait-24h",
+      "name": "Wait Until 24h Before",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [540, 300]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.body.telegramUsername }}",
+        "text": "=🔔 *Upcoming Deadline Reminder* 🔔\n\nHi {{ $json.body.studentName }},\n\nYou have an upcoming deadline tomorrow:\n📝 *Task:* {{ $json.body.taskTitle }}\n📚 *Subject:* {{ $json.body.subject }}\n📅 *Due Date:* {{ new Date($json.body.deadline).toLocaleString() }}\n\nMake sure to complete it on time!",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "node-send-tg-reminder",
+      "name": "Send Telegram Reminder",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [760, 300],
+      "credentials": {
+        "telegramApi": {
+          "id": "h2Q6l1bxyZuXkLTL",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Calculate Reminder Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Reminder Time": {
+      "main": [
+        [
+          {
+            "node": "Wait Until 24h Before",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait Until 24h Before": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram Reminder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "name": "campusflow"
+    }
+  ]
+}

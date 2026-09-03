@@ -38,7 +38,7 @@ export default function SignupPage() {
     }
 
     if (token) {
-      localStorage.setItem("unikit_token", token);
+      localStorage.setItem("campusflow_token", token);
       window.location.href = "/dashboard";
     }
   }, []);
@@ -161,7 +161,7 @@ export default function SignupPage() {
       )}
 
       <form onSubmit={step === 3 ? handleSubmit : (e) => { e.preventDefault(); handleNext(); }} className="space-y-3">
-        
+
         {/* STEP 1: CREDENTIALS */}
         {step === 1 && (
           <div className="space-y-3 animate-in slide-in-from-right-4 duration-300">
@@ -304,7 +304,7 @@ export default function SignupPage() {
         {step === 3 && (
           <div className="space-y-3 animate-in slide-in-from-right-4 duration-300">
             <div className="p-3 bg-blue-500/10 text-blue-700 border border-blue-500/20 rounded-[10px] text-xs mb-3 leading-relaxed">
-              UniKit uses Telegram to send you intelligent task reminders, summarize college notices on-the-fly, and alert you of attendance risks.
+              CampusFlow uses Telegram to send you intelligent task reminders, summarize college notices on-the-fly, and alert you of attendance risks.
             </div>
             
             <div>
