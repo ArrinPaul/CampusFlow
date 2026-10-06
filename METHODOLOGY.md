@@ -34,7 +34,7 @@ $$\text{needed} = \left\lceil \frac{p\,T - 100\,A}{100 - p} \right\rceil$$
 
   This comes from requiring $(A + n)/(T + n) \ge p/100$ for $n$ future classes attended.
 
-**Example.** With $T = 40$, $A = 28$ and $p = 75$, the percentage is 70.0%, below target, so $\text{needed} = \lceil (3000 - 2800)/25 \rceil = 8$ classes. With $A = 33$ instead, the percentage is 82.5% and the student can skip $\lfloor 4400/75... \rfloor$, which is $\lfloor 3300/75 - 40 \rfloor = 4$ classes.
+**Example.** With $T = 40$, $A = 28$ and $p = 75$, the percentage is 70.0%, below target, so $\text{needed} = \lceil (3000 - 2800)/25 \rceil = 8$ classes. With $A = 33$ instead, the percentage is 82.5% and the student can skip $\lfloor 3300/75 - 40 \rfloor = 4$ more classes.
 
 The formulas divide by $100 - p$, so a target of exactly 100% produces `Infinity` or `NaN`. The percentage is rounded to one decimal place for display, but the safe or at-risk decision compares the rounded value with the target.
 
