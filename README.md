@@ -1,178 +1,260 @@
-# CampusFlow: AI-Powered Student Hub and Study Assistant
+<div align="center">
 
-CampusFlow is a production-grade, full-stack campus management and cognitive study assistant platform. It merges automated administrative tools—such as task scheduling, attendance risk metrics, Telegram notifications, and notice broadcasts—with a NotebookLM-inspired study workspace and a visual collaboration whiteboard.
+# CampusFlow
 
----
+### A student hub with an AI study assistant, a whiteboard and Telegram deadline reminders
 
+_Plan tasks, track attendance, study from your own notes and never miss a deadline posted in a class group._
 
+[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
+![Next.js](https://img.shields.io/badge/Next.js-App_Router-000000?logo=nextdotjs&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-Postgres-3ECF8E?logo=supabase&logoColor=white)
+![Groq](https://img.shields.io/badge/Groq-LLM-F55036)
+![n8n](https://img.shields.io/badge/n8n-automation-EA4B71?logo=n8n&logoColor=white)
 
-## System Architecture
+[Quickstart](#quickstart) · [Features](#features) · [Architecture](#architecture) · [Methodology](./METHODOLOGY.md) · [Security](#security) · [Project status](#project-status) · [Report an issue](https://github.com/ArrinPaul/CampusFlow/issues)
 
-CampusFlow is a single Next.js application: the dashboard UI and the API both live in `frontend/` (App Router pages plus `app/api/**/route.ts` handlers), so there's one process, one deploy, and no cross-origin calls between "frontend" and "backend."
-
-```mermaid
-graph TD
-    %% Styling
-    classDef default fill:#FCFBFA,stroke:#E4E2DC,stroke-width:2px,color:#3D645A;
-    classDef primary fill:#3D645A,stroke:#3D645A,stroke-width:1px,color:#ffffff;
-    classDef secondary fill:#ffeaa7,stroke:#fdcb6e,stroke-width:1px,color:#2d3436;
-    classDef db fill:#d4efdf,stroke:#27ae60,stroke-width:1px,color:#196f3d;
-
-    %% Nodes
-    User([Student Client])
-    App[Next.js App <br/>Pages + /api/* routes]:::primary
-    DB[(Supabase DB / Local Fallback)]:::db
-    GroqAI[Groq Cloud AI <br/>gemma2-9b-it / Fallback]:::secondary
-    N8n[n8n Automations]:::secondary
-    TG[Telegram Bot]:::secondary
-    PDF[PDF.js Local Worker]:::secondary
-
-    %% Edits
-    User <--> |Interacts| App
-    App <--> |Local PDF Parsing| PDF
-    App <--> |CRUD Queries| DB
-    App <--> |AI Prompts & Text Summaries| GroqAI
-    App -.-> |Deadlines & Notice Webhooks| N8n
-    N8n -.-> |Send Notifications| TG
-```
+</div>
 
 ---
 
-## Feature Modules Detail
+## About
 
-### 1. Vector Collaboration Whiteboard
-The Whiteboard is built directly on native HTML5 Canvas APIs, avoiding heavy third-party canvas engines to maintain high frame rates.
+CampusFlow puts the everyday parts of student life in one place. You keep a **task list**, a **notice board** and an **attendance tracker** that tells you how many classes you can still skip. You study with an **AI assistant** that works from your own notes: it chats, makes flashcards, builds quizzes and grades short answers. You sketch ideas on a **whiteboard** and can turn a text description into a flowchart. And through Telegram and [n8n](https://n8n.io), a teacher's announcement in a class group ("assignment due next Monday") is turned into a dated event with automatic reminders.
+
+It is one Next.js application: the pages and the API live together in `frontend/`, data is stored in Supabase, and AI runs on Groq. When no AI key is configured, the AI features fall back to built-in sample responses, so the app still runs.
+
+**Who it's for:** college students, and class representatives who share deadlines in a Telegram group.
+
+> This is a student project under active development. Read [Project status](#project-status) and [Security](#security) before using it with real accounts.
+
+## Table of Contents
+
+1. [About](#about)
+2. [Features](#features)
+3. [Architecture](#architecture)
+4. [Tech stack](#tech-stack)
+5. [Quickstart](#quickstart)
+6. [Configuration](#configuration)
+7. [Data model](#data-model)
+8. [API overview](#api-overview)
+9. [Security](#security)
+10. [Testing](#testing)
+11. [Project structure](#project-structure)
+12. [Deployment](#deployment)
+13. [Project status](#project-status)
+14. [Troubleshooting](#troubleshooting)
+15. [Documentation](#documentation)
+16. [Contributing](#contributing)
+17. [License](#license)
+
+## Features
+
+| Area | What it does |
+| :--- | :--- |
+| **Accounts** | Sign up and log in with a password. Sessions use a 7-day token. You can link a Telegram username and Google Calendar. |
+| **Tasks and notices** | A task list with today and upcoming views, and a notice board where a pasted notice can be summarized into three bullet points |
+| **Attendance** | Per subject, the percentage, how many more classes you can skip, or how many you need to attend to get back to your target |
+| **Study assistant** | Upload PDF, Markdown or text notes (parsed in the browser). Tick the sources to use, then chat, generate flashcards, or generate multiple-choice, true/false and short-answer quizzes |
+| **Smart tools** | A workspace of one-click AI tools that work on your notes |
+| **Flashcards and quizzes** | Saved decks and quizzes, flip cards with keyboard shortcuts, mastery ratings, and AI grading of short answers |
+| **Whiteboard** | A canvas with shapes, freehand pen, images, layers, grouping, undo and redo, a minimap, auto-save, and an AI panel that turns text into a diagram |
+| **Telegram deadlines (NotifyMe)** | Register a Telegram group, let the bot read teacher messages, extract deadlines with an LLM, save them as events and send reminders |
+| **Calendar sync** | Fan out extracted events to students' Google Calendars |
+| **Dashboard** | Widgets for productivity, weekly progress, study streak, upcoming events, recent activity and quick actions |
+
+## Architecture
 
 ```mermaid
 flowchart LR
-    classDef engine fill:#3D645A,color:#white;
-    
-    A[Canvas Surface] <--> B[useCanvasEngine]:::engine
-    B <--> C[Undo / Redo Stack]
-    B <--> D[Shapes & Groups State]
-    B <--> E[Named Layers Manager]
-    B <--> F[Minimap Viewport Tracker]
-    B --> G[Auto-Save Hook <br/>Debounced 3s]
-    G --> H[PUT /api/whiteboards]
+    U[Student browser] <-->|pages + /api/*| APP[Next.js app<br/>frontend/]
+    APP <--> DB[(Supabase Postgres)]
+    APP -->|prompts| LLM[Groq]
+    APP -->|JWT auth| APP
+    TG[Telegram group] --> N8N[n8n workflows]
+    N8N -->|extract deadline| LLM2[Gemini in n8n]
+    N8N <-->|REST| APP
+    N8N -->|reminders| TG
+    APP -->|events| GC[Google Calendar]
 ```
 
-* **Freehand Pen Drawing**: Click-and-drag drawing interface that captures raw points. On completion, the coordinates are adjusted to fit a computed minimum bounding box, and points are translated relative to the shape coordinates. This enables pen drawings to be translated, resized, and grouped just like standard vector shapes.
-* **Image Insertion**: Loads images via a client-side file picker. Images are converted to base64 data URLs, loaded into cached image tags, and drawn using the canvas drawing context.
-* **Shape Grouping**: Multi-selection via Shift+click allows shapes to be grouped together under a unique ID. Moving or resizing any shape in a group applies the translation transform to all members of the group.
-* **Layers System**: Sidebar layer panel supporting locks, visibility toggles, layer creation, and layer list reordering. Rendering loops sort shapes by their assigned layer ID order and skip shapes on hidden layers.
-* **Inline Text Editing**: Double-clicking a shape opens an absolute-positioned textarea directly over the shape, scaled by the viewport zoom, replacing browser prompt dialogs.
-* **Minimap Projections**: Bottom-right floating canvas projecting the virtual coordinate space (-2000 to +2000) onto a small grid. It renders the viewport boundary using coordinate mapping and allows click-to-pan repositioning.
-* **Auto-Save & Fallback**: Automatically updates the whiteboard database state every 3 seconds using a debounced hook. If the Supabase database connection is offline or if the whiteboard table has not been initialized, the system automatically falls back to storing whiteboard JSON payloads locally on the server (`frontend/whiteboards_db.local.json`).
+- **One app.** Next.js route handlers under `src/app/api/` are the back end. The browser calls them on the same origin.
+- **Database.** Supabase Postgres, accessed from the server with the service-role key. Each route filters by the signed-in student's ID.
+- **AI.** `src/lib/server/groq.js` wraps Groq calls and returns sample content when no key is set.
+- **n8n.** Five workflow files in `n8n/` register groups, ingest teacher messages, send reminders and broadcast notices. `n8n/n8n-summary.md` explains them.
 
----
+The formulas and rules (attendance, reminder timing, event extraction, whiteboard geometry) are in [METHODOLOGY.md](./METHODOLOGY.md).
 
-### 2. Cognitive Study Assistant (NotebookLM Style)
-This module organizes student documents (PDFs, Markdown, and text files) into a unified learning environment.
+## Tech stack
 
-```mermaid
-flowchart TD
-    classDef highlight fill:#ffeaa7,stroke:#fdcb6e,color:#333;
+| Layer | Technology |
+| :--- | :--- |
+| Framework | Next.js (App Router), React 19, TypeScript |
+| UI | Tailwind CSS 4, shadcn and Base UI, Framer Motion, GSAP, Lenis, Lucide icons |
+| Data | Supabase (PostgreSQL) |
+| Auth | Password hashing with `bcryptjs`, signed tokens with `jsonwebtoken`, Google OAuth for Calendar |
+| AI | Groq (`groq-sdk`, model `groq/compound`), Gemini inside n8n |
+| Documents | `PDF.js` in the browser, `react-markdown`, `mermaid` |
+| Automation | n8n and the Telegram Bot API |
+| Testing | Vitest |
+| Hosting config | Vercel (`vercel.json`), Render (`render.yaml`) |
 
-    Doc[PDF, MD, or TXT File] --> |Dynamic Upload| Parse[FileReader & PDF.js Worker]
-    Parse --> |Local Text Extraction| Input[Sources Panel / LocalStorage]:::highlight
-    Input --> |Multi-Checked Source State| AI[Groq LLM Context]
-    AI --> |Structured Generation| Flash[Study Carousel / Browse Grid]
-    AI --> |Citations & Explanations| Quiz[MCQ / True-False / QA Quiz]
-```
+## Quickstart
 
-* **Client-Side Document Parsing**: Extracted text content is read on the client using `FileReader` and an in-browser `PDF.js` worker script. This bypasses server-side parser installation requirements.
-* **Unified Sources Manager**: Course notes are saved in a unified source store within `localStorage`. Checking/unchecking documents instantly updates the context used to generate quizzes and flashcards.
-* **Interactive Study Carousel**: Flashcards flip 3D on click, and support keyboard listeners (Space to flip, Left/Right arrows to navigate, and number hotkeys to rate mastery).
-* **Multi-Format Quiz Generator**: Generates multiple choice, true/false, or graded short-answer questions. Short answers are evaluated by the AI and assigned a score matching model criteria. All quiz outputs feature direct document citations.
-* **API Offline Fallback**: If the Groq AI key is unconfigured or returns an error, the API routes intercept the exception and feed high-fidelity structured summary data, roadmaps, and quiz questions to the client, keeping the system functional.
-
----
-
-### 3. Automated Utilities
-* **Notice Summarization**: Summarizes uploaded campus board notices into three concise bullet points containing dates and action items.
-* **Telegram Notification Relay**: Integrates with n8n workflows and Telegram Bot API tokens to broadcast notice alerts and task deadlines.
-* **Attendance Risk Ledger**: Compares class counts, attended classes, and the minimum target threshold (e.g. 75%) to calculate class skip limits or warn students of risk.
-* **Task Planner**: Calendar synchronizer that publishes tasks and deadlines to Google Calendar accounts.
-
----
-
-## Directory Structure
-
-```
-D:/Campus Flow/
-├── frontend/
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── api/                       # API routes (formerly the Express backend)
-│   │   │   │   ├── auth/                  # register, login, me, google/*
-│   │   │   │   ├── tasks/, notices/, attendance/, automations/
-│   │   │   │   ├── ai/                    # Chat, quiz/flashcard generation, smart tools
-│   │   │   │   ├── quizzes/, flashcards/  # Persisted quiz/flashcard CRUD
-│   │   │   │   ├── whiteboards/           # Whiteboard CRUD (with local JSON fallback)
-│   │   │   │   ├── groups/, calendar/, reminders/  # Telegram/n8n automation endpoints
-│   │   │   │   └── health/
-│   │   │   └── (dashboard)/
-│   │   │       └── dashboard/
-│   │   │           ├── tools/             # Smart Tools workspace page
-│   │   │           └── whiteboard/        # Visual Whiteboard page
-│   │   ├── components/
-│   │   │   └── shared/
-│   │   │       └── Sidebar.tsx            # Dashboard Navigation Sidebar
-│   │   ├── features/
-│   │   │   └── whiteboard/                # Whiteboard components, hooks, and helpers
-│   │   └── lib/
-│   │       ├── api.ts                     # Client-side fetch wrapper (calls same-origin /api/*)
-│   │       └── server/                    # Server-only: auth (JWT), Supabase, Groq, Google, n8n
-│   ├── .env.local                         # Environment configuration (server + client)
-│   └── package.json
-└── sql/
-    └── schema.sql                         # Database Table and Index Definitions
-```
-
----
-
-## Development Setup
-
-### 1. Database Schema Setup
-Execute the instructions in [schema.sql](file:///D:/Campus%20Flow/sql/schema.sql) in your Supabase SQL Editor. This initializes tables and indices for students, tasks, notices, attendance, and whiteboards.
-
-### 2. Environment Configuration
-Create a `.env.local` file in the `frontend/` directory:
-```env
-SUPABASE_URL=https://your-supabase-id.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-jwt-key
-JWT_SECRET=your-secure-jwt-key
-DEV_MODE=false
-NEXT_PUBLIC_DEV_MODE=false
-GROQ_API_KEY=your-groq-api-key
-N8N_DEADLINE_WEBHOOK=https://your-n8n-url/webhook/deadline
-N8N_NOTICE_WEBHOOK=https://your-n8n-url/webhook/notice
-TELEGRAM_BOT_TOKEN=your-telegram-token
-FRONTEND_URL=http://localhost:3000
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-GOOGLE_REDIRECT_URI=http://localhost:3000/api/auth/google/callback
-```
-Note: these were previously split across a separate `backend/.env` and `frontend/.env.local` — they now all live in `frontend/.env.local` since there's one app. None of these are prefixed `NEXT_PUBLIC_` (except the dev-mode flag needed client-side to show the dev-login button), so they stay server-only and are never sent to the browser.
-
-### 3. Install & Start
+Prerequisites: Node.js 20 or newer (the root `package.json` asks for 24.x) and a [Supabase](https://supabase.com) project. A [Groq](https://console.groq.com) key is optional.
 
 ```bash
-cd frontend
+git clone https://github.com/ArrinPaul/CampusFlow.git
+cd CampusFlow/frontend
 npm install
-npm run dev
 ```
 
-The app (pages + `/api/*` routes) runs on `http://localhost:3000`.
+**1. Create the database.** In the Supabase SQL editor, run the files in `sql/` in this order: `schema.sql`, `quizzes_schema.sql`, `flashcards_schema.sql`, then `notifyme-migration.sql`. (`seed_dev_user.sql` and `seed_test_group.sql` add sample data.)
 
----
+**2. Create `frontend/.env.local`:**
+
+```env
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+JWT_SECRET=a-long-random-string
+GROQ_API_KEY=optional-groq-key
+DEV_MODE=false
+NEXT_PUBLIC_DEV_MODE=false
+```
+
+**3. Run it:**
+
+```bash
+npm run dev          # http://localhost:3000
+```
+
+Sign up on the login page. The Telegram and n8n features need extra setup (see [Configuration](#configuration)).
+
+## Configuration
+
+Set these in `frontend/.env.local` (local) or in your host's environment settings.
+
+| Variable | Required | Purpose |
+| :--- | :---: | :--- |
+| `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | Yes | Database access. The service-role key is a secret and bypasses row-level security. |
+| `JWT_SECRET` | Yes | Signs login tokens. Use a long random value. |
+| `GROQ_API_KEY` | No | Enables real AI. Without it the app returns built-in sample responses. |
+| `DEV_MODE`, `NEXT_PUBLIC_DEV_MODE` | No | When `DEV_MODE=true`, the bearer token `dev-token` is accepted as a built-in developer user. **Never enable in production.** |
+| `N8N_DEADLINE_WEBHOOK`, `N8N_NOTICE_WEBHOOK` | No | URLs of your n8n workflows, called when tasks or notices are created |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI` | No | Google OAuth for Calendar sync |
+| `FRONTEND_URL` | No | Public URL, used in links |
+| `TELEGRAM_BOT_TOKEN` | No | Listed in `render.yaml` for the Telegram bot |
+
+## Data model
+
+SQL files in `sql/` create these tables.
+
+| File | Tables |
+| :--- | :--- |
+| `schema.sql` | `students`, `tasks`, `notices`, `attendance`, `automation_logs`, `preferences`, `whiteboards` |
+| `quizzes_schema.sql` | `quizzes`, `quiz_questions` |
+| `flashcards_schema.sql` | `flashcard_decks`, `flashcards` |
+| `notifyme-migration.sql` | `telegram_groups`, `group_members`, `events`, `reminders` |
+
+## API overview
+
+Route handlers live in `frontend/src/app/api/`.
+
+| Group | Routes |
+| :--- | :--- |
+| Auth | `auth/register`, `auth/login`, `auth/me`, `auth/google/*` |
+| Planner | `tasks` (with `today`, `upcoming`), `notices` (with `broadcast`), `attendance` |
+| AI | `ai/chat`, `ai/quiz`, `ai/flashcards`, `ai/grade-short-answer`, `ai/tool/[toolSlug]`, `ai/tip`, `ai/attendance-alert` |
+| Study content | `quizzes` (with `submit`), `flashcards/decks`, `whiteboards` |
+| Telegram and reminders | `groups/*`, `reminders/due`, `reminders/[id]/mark-sent`, `calendar/fan-out`, `automations` |
+| Health | `health` |
+
+## Security
+
+What exists:
+
+- Passwords are hashed with bcrypt, and tokens are signed and expire after 7 days.
+- Student data routes require a valid token and filter rows by the signed-in student's ID.
+- Secrets live in environment variables, and server-only modules are marked `server-only`.
+
+**Known gaps. Fix these before real use.**
+
+- **Several routes have no authentication.** The ones called by n8n (`groups/register`, `groups/by-chat-id`, `groups/webhook/message`, `reminders/due`, `reminders/[id]/mark-sent`, `calendar/fan-out`) check no token, so anyone who finds the URL can call them. For example `reminders/due` lists every unsent reminder. Protect them with a shared secret header checked in the handler and set in n8n.
+- **`DEV_MODE` is a backdoor if left on.** With `DEV_MODE=true`, the token `dev-token` logs anyone in as a built-in user.
+- **The login token carries the whole student record**, and the service-role database key bypasses row-level security, so the correctness of every route's `student_id` filter is the only data barrier.
+- **No rate limiting** on login, registration or the AI routes.
 
 ## Testing
 
-Run the test suite in the frontend directory to verify whiteboard math and coordinates translations:
 ```bash
 cd frontend
-npm run test
+npm test            # Vitest
+npm run lint
 ```
-All 63 whiteboard math and shape engine tests will run and output their status.
+
+Two Vitest files cover the whiteboard geometry and shape helpers (`src/features/whiteboard/__tests__/`). Nothing else has automated tests, and there is no CI. I could not run the install and test commands while writing this README, so the current pass state is unverified.
+
+## Project structure
+
+```text
+CampusFlow/
+├── frontend/                 The Next.js app
+│   └── src/
+│       ├── app/(auth)/       Login and sign-up pages
+│       ├── app/(dashboard)/  Dashboard, tools and whiteboard pages
+│       ├── app/api/          Route handlers (the back end)
+│       ├── features/whiteboard/   Canvas engine, components, hooks, tests
+│       ├── components/       Dashboard widgets, sidebar, shared UI
+│       └── lib/server/       Auth, Supabase, Groq, Google and n8n helpers
+├── sql/                      Database schema and seed files
+├── n8n/                      Importable n8n workflows and a summary
+├── CONTEXT.md, DESIGN.md, Rules.md   Project notes
+├── render.yaml, vercel.json  Hosting configuration
+├── METHODOLOGY.md
+└── LICENSE
+```
+
+## Deployment
+
+`vercel.json` and `render.yaml` are provided (the Render service uses `frontend/` as its root and `/api/health` as the health check). Set the variables from [Configuration](#configuration) in the host, make sure `DEV_MODE` is `false`, run the SQL files on the production database, and import the n8n workflows with their `BACKEND_URL` variable pointing at your deployment. The demo URL listed on the repository currently returns 404.
+
+## Project status
+
+- **Telegram and n8n flows are the least verified part.** They depend on external accounts and were not exercised here.
+- **Unauthenticated automation routes** (see [Security](#security)).
+- **The no-key fallback for event extraction is crude.** Without `GROQ_API_KEY`, every message sent to the webhook becomes an event titled "Extracted: ..." dated tomorrow, even casual chat.
+- **Corrupted characters.** The attendance warning message in `src/lib/server/groq.js` contains garbled emoji characters from an encoding mistake.
+- **A local data file is committed.** `frontend/whiteboards_db.local.json` is the whiteboard fallback store and should not be in version control.
+- **Documented model differs from the code.** Older notes mention `gemma2-9b-it`. The code calls `groq/compound`.
+- **Tests and CI are minimal** (see [Testing](#testing)).
+
+## Troubleshooting
+
+| Symptom | Likely cause | Fix |
+| :--- | :--- | :--- |
+| "Supabase not configured" | `SUPABASE_URL` or the service-role key is missing or `placeholder` | Set both in `frontend/.env.local` and restart. |
+| Login always returns "Invalid token" | `JWT_SECRET` changed or is missing | Use one stable secret and log in again. |
+| AI answers say "Demo Mode" | No valid `GROQ_API_KEY` | Add a Groq key. |
+| Whiteboards save but are missing after a restart on a host | The database table is not set up, so it used the local file fallback | Run `sql/schema.sql`. |
+| Telegram reminders never arrive | n8n is not running, the workflow variables are missing or the bot is not in the group | Check `n8n/n8n-summary.md` and the workflow variables. |
+| Attendance shows "Need Infinity more classes" (or NaN) | A target of 100% was entered, which divides by zero | Use a target below 100. |
+
+## Documentation
+
+| Document | Purpose |
+| :--- | :--- |
+| [METHODOLOGY.md](METHODOLOGY.md) | Attendance formulas, reminder timing, event extraction, whiteboard maths and AI fallbacks |
+| [n8n/n8n-summary.md](n8n/n8n-summary.md) | What each n8n workflow does |
+| [CONTEXT.md](CONTEXT.md), [DESIGN.md](DESIGN.md), [Rules.md](Rules.md) | Project context, design notes and working rules |
+
+## Contributing
+
+Issues and pull requests are welcome. Run `npm run lint` and `npm test` in `frontend/` before opening a PR, never commit `.env.local` or real keys, and keep database changes in `sql/`.
+
+## License
+
+Released under the MIT License. See [LICENSE](LICENSE).
